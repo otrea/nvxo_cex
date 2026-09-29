@@ -1,0 +1,152 @@
+// Sections A (launch & onboarding) and B (sign in / sign up / password)
+var A = [
+  { id: 'A01', name: 'Splash', head: null, align: 'center', vcenter: true, blocks: [
+    ['logo', { h: 76 }], ['sp', 10], ['p', 'The regulated exchange of the NVXO ecosystem', { align: 'center', c: 'mut', s: 14 }],
+    ['sp', 260], ['small', 'NVXO Europe a.s. · Czech Republic', { align: 'center' }] ] },
+  { id: 'A02', name: 'Onboarding 1 · Trade', head: { back: false, t: '', right: [['text', 'Skip', 'A05']] }, blocks: [
+    ['illus', { ic: 'candlestick_chart', h: 330, sat: ['currency_bitcoin', 'show_chart', 'bolt', 'euro'] }],
+    ['dots', 0], ['h', 'Trade 350+ crypto pairs', { s: 30, align: 'center' }],
+    ['p', 'Spot trading with a live order book, limit, market and stop-limit orders, and fees from 0.10%.', { align: 'center' }] ],
+    foot: [['Next', 'primary', 'A03']] },
+  { id: 'A03', name: 'Onboarding 2 · Earn', head: { back: false, t: '', right: [['text', 'Skip', 'A05']] }, blocks: [
+    ['illus', { ic: 'savings', h: 330, sat: ['percent', 'lock_clock', 'trending_up', 'account_balance_wallet'] }],
+    ['dots', 1], ['h', 'Put idle crypto to work', { s: 30, align: 'center' }],
+    ['p', 'Simple Earn, launchpad sales, trading competitions and rewards for inviting friends.', { align: 'center' }] ],
+    foot: [['Next', 'primary', 'A04']] },
+  { id: 'A04', name: 'Onboarding 3 · Secure', head: { back: false, t: '', right: [['text', 'Skip', 'A05']] }, blocks: [
+    ['illus', { ic: 'verified_user', h: 330, sat: ['fingerprint', 'lock', 'shield', 'how_to_reg'] }],
+    ['dots', 2], ['h', 'Built for EU rules', { s: 30, align: 'center' }],
+    ['p', 'Operated by NVXO Europe a.s. under Czech supervision, with 2FA, biometric sign-in and cold-storage custody.', { align: 'center' }] ],
+    foot: [['Get started', 'primary', 'B05'], ['I already have an account', 'ghost', 'B01']] },
+  { id: 'A05', name: 'Welcome · guest home', tab: 'home', head: { logo: true, right: [['dark_mode', 'C07']] }, blocks: [
+    ['h', 'Welcome to NVXO', { s: 28 }],
+    ['p', 'Buy, sell and manage crypto in a few taps — anytime, anywhere.'],
+    ['btns', [['Sign up', 'secondary', 'B05'], ['Log in', 'primary', 'B01']]],
+    ['sp', 4],
+    ['actions', [['add_shopping_cart', 'Buy', 'Z07'], ['sell', 'Sell', 'Z07'], ['file_download', 'Deposit', 'Z07'], ['file_upload', 'Withdraw', 'Z07'],
+      ['group_add', 'Referral', 'Z07'], ['support_agent', 'Support', 'R01'], ['rocket_launch', 'Launchpad', 'Z07'], ['apps', 'More', 'C04']]],
+    ['chips', ['Hot pairs', 'Top gainers', 'New on NVXO'], { a: 0, to: ['self', 'self', 'self'] }],
+    ['tiles', [{ sym: 'BTC', p: '67,412.50', chg: '+2.31%', to: 'D04' }, { sym: 'ETH', p: '3,452.18', chg: '+1.87%', to: 'D04' },
+      { sym: 'NVXO', p: '6.2540', chg: '+11.13%', to: 'D04' }, { sym: 'SOL', p: '162.35', chg: '-0.94%', to: 'D04' }]],
+    ['link', 'View all markets', { to: 'D01', align: 'center', ic: 'arrow_forward' }] ] },
+  { id: 'A06', name: 'Wallets · guest', tab: 'wallets', head: { back: false, t: 'Wallets', big: true }, align: 'center', vcenter: true, blocks: [
+    ['illus', { ic: 'account_balance_wallet', h: 240, sat: ['lock', 'key', 'person'] }],
+    ['h', 'Log in to see your wallets', { s: 24, align: 'center' }],
+    ['p', 'Deposits, withdrawals and balances appear here once you are signed in.', { align: 'center' }],
+    ['btns', [['Register', 'secondary', 'B05'], ['Log in', 'primary', 'B01']]] ] }
+];
+var Bs = [
+  { id: 'B01', name: 'Log in · Email', head: { close: true, backTo: 'A05', t: '' }, blocks: [
+    ['logo', { h: 44, align: 'left' }], ['sp', 4], ['h', 'Log in'], ['p', 'Welcome back. Log in to trade and manage your assets.'],
+    ['seg', ['Email', 'Phone'], { a: 0, to: [null, 'B02'] }],
+    ['field', { label: 'Email', value: 'jan.novak@email.cz' }],
+    ['field', { label: 'Password', value: '••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['link', 'Forgot password?', { to: 'B10', s: 14 }],
+    ['sp', 40],
+    ['rich', [["Don't have an account? ", {}], ['Sign up', { c: 'mint', w: 'SemiBold' }]], { align: 'center', to: 'B05' }] ],
+    foot: [['Log in', 'primary', 'B03']] },
+  { id: 'B02', name: 'Log in · Phone', head: { close: true, backTo: 'A05', t: '' }, blocks: [
+    ['logo', { h: 44, align: 'left' }], ['sp', 4], ['h', 'Log in'], ['p', 'Welcome back. Log in to trade and manage your assets.'],
+    ['seg', ['Email', 'Phone'], { a: 1, to: ['B01', null] }],
+    ['field', { label: 'Phone number', prefix: 'CZ +420', value: '777 123 456', to: 'B16' }],
+    ['field', { label: 'Password', value: '••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['link', 'Forgot password?', { to: 'B10', s: 14 }],
+    ['sp', 40],
+    ['rich', [["Don't have an account? ", {}], ['Sign up', { c: 'mint', w: 'SemiBold' }]], { align: 'center', to: 'B05' }] ],
+    foot: [['Log in', 'primary', 'B03']] },
+  { id: 'B03', name: 'Login verification (2FA)', head: { t: 'Verification' }, blocks: [
+    ['badge', 'info', { ic: 'phonelink_lock' }], ['h', 'Enter your 2FA code', { align: 'center', s: 24 }],
+    ['p', 'Open Google Authenticator and enter the 6-digit code for NVXO CEX (jan.n•••@email.cz).', { align: 'center' }],
+    ['otp', { v: '4827' }],
+    ['link', "Can't use your authenticator? Get an email code", { align: 'center', to: 'self', s: 14 }] ],
+    foot: [['Verify', 'primary', 'C01']] },
+  { id: 'B04', name: 'Log in · wrong password', head: { close: true, backTo: 'A05', t: '' }, blocks: [
+    ['logo', { h: 44, align: 'left' }], ['sp', 4], ['h', 'Log in'], ['p', 'Welcome back. Log in to trade and manage your assets.'],
+    ['seg', ['Email', 'Phone'], { a: 0, to: [null, 'B02'] }],
+    ['field', { label: 'Email', value: 'jan.novak@email.cz' }],
+    ['field', { label: 'Password', value: '•••••••', right: 'icon:visibility', rto: 'self', error: 'Incorrect email or password. 2 attempts left before your account is locked.' }],
+    ['link', 'Forgot password?', { to: 'B10', s: 14 }],
+    ['sp', 40],
+    ['rich', [["Don't have an account? ", {}], ['Sign up', { c: 'mint', w: 'SemiBold' }]], { align: 'center', to: 'B05' }] ],
+    foot: [['Log in', 'primary', 'B15']] },
+  { id: 'B05', name: 'Sign up · Email', head: { t: 'Create account', backTo: 'A05' }, blocks: [
+    ['seg', ['Email', 'Phone'], { a: 0, to: [null, 'B06'] }],
+    ['field', { label: 'Email', value: 'jan.novak@email.cz' }],
+    ['field', { label: 'Password', value: '••••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['progress', { v: 0.75, l: 'Password strength', r: 'Strong', rc: 'pos', h: 6, s: '8+ characters with upper and lower case, a number and a symbol.' }],
+    ['field', { label: 'Confirm password', value: '••••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['field', { label: 'Referral ID (optional)', ph: 'Enter a referral ID' }],
+    ['check', [['I have read and agree to the NVXO CEX ', {}], ['Terms of Service', { c: 'mint', w: 'SemiBold' }], [' and ', {}], ['Privacy Policy', { c: 'mint', w: 'SemiBold' }], ['.', {}]], { to: 'B13' }],
+    ['rich', [['Already have an account? ', {}], ['Log in', { c: 'mint', w: 'SemiBold' }]], { align: 'center', to: 'B01' }] ],
+    foot: [['Create account', 'primary', 'B07']] },
+  { id: 'B06', name: 'Sign up · Phone', head: { t: 'Create account', backTo: 'A05' }, blocks: [
+    ['seg', ['Email', 'Phone'], { a: 1, to: ['B05', null] }],
+    ['field', { label: 'Phone number', prefix: 'CZ +420', value: '777 123 456', to: 'B16' }],
+    ['field', { label: 'Password', value: '••••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['progress', { v: 0.75, l: 'Password strength', r: 'Strong', rc: 'pos', h: 6, s: '8+ characters with upper and lower case, a number and a symbol.' }],
+    ['field', { label: 'Confirm password', value: '••••••••••••', right: 'icon:visibility', rto: 'self' }],
+    ['field', { label: 'Referral ID (optional)', ph: 'Enter a referral ID' }],
+    ['check', [['I have read and agree to the NVXO CEX ', {}], ['Terms of Service', { c: 'mint', w: 'SemiBold' }], [' and ', {}], ['Privacy Policy', { c: 'mint', w: 'SemiBold' }], ['.', {}]], { to: 'B14' }],
+    ['rich', [['Already have an account? ', {}], ['Log in', { c: 'mint', w: 'SemiBold' }]], { align: 'center', to: 'B02' }] ],
+    foot: [['Create account', 'primary', 'B07']] },
+  { id: 'B07', name: 'Verify email code', head: { t: 'Verify email' }, blocks: [
+    ['badge', 'info', { ic: 'mark_email_read' }], ['h', 'Check your inbox', { align: 'center', s: 24 }],
+    ['p', 'We sent a 6-digit code to jan.novak@email.cz. It expires in 10 minutes.', { align: 'center' }],
+    ['otp', { v: '48' }],
+    ['small', 'Resend code in 0:54', { align: 'center', s: 14 }],
+    ['link', 'Change email address', { align: 'center', to: 'back', s: 14 }] ],
+    foot: [['Verify', 'primary', 'B08']] },
+  { id: 'B08', name: 'Account created', head: null, align: 'center', vcenter: true, blocks: [
+    ['badge', 'success'], ['h', 'Your account is ready', { align: 'center' }],
+    ['p', 'Verify your identity to unlock deposits, trading and withdrawals. It takes about 3 minutes.', { align: 'center' }],
+    ['timeline', [['Account created', 'jan.novak@email.cz', true], ['Verify identity', 'ID document and selfie', false], ['Make your first deposit', 'Crypto or EUR via SEPA', false]]] ],
+    foot: [['Verify identity now', 'primary', 'Q01'], ['Explore first', 'outline', 'C01']] },
+  { id: 'B10', name: 'Forgot password', head: { t: 'Reset password' }, blocks: [
+    ['h', 'Forgot your password?', { s: 24 }], ['p', "Enter the email or phone number on your account and we'll send you a reset code."],
+    ['seg', ['Email', 'Phone'], { a: 0, to: [null, 'self'] }],
+    ['field', { label: 'Email', value: 'jan.novak@email.cz' }],
+    ['notice', 'For your security, withdrawals are paused for 24 hours after a password reset.', { k: 'info' }] ],
+    foot: [['Send code', 'primary', 'B11']] },
+  { id: 'B11', name: 'Reset code', head: { t: 'Reset password' }, blocks: [
+    ['h', 'Enter the reset code', { s: 24 }], ['p', 'We sent a 6-digit code to jan.n•••@email.cz.'],
+    ['otp', { v: '482915' }],
+    ['rich', [["Didn't get it? ", {}], ['Resend code', { c: 'mint', w: 'SemiBold' }]], { to: 'self', s: 14 }] ],
+    foot: [['Continue', 'primary', 'B12']] },
+  { id: 'B12', name: 'New password', head: { t: 'Reset password' }, blocks: [
+    ['h', 'Set a new password', { s: 24 }],
+    ['field', { label: 'New password', value: '••••••••••••', right: 'icon:visibility_off', rto: 'self' }],
+    ['progress', { v: 1, l: 'Password strength', r: 'Very strong', rc: 'pos', h: 6 }],
+    ['list', [{ t: 'At least 8 characters', ric: 'check_circle', ricc: 'pos', py: 8 }, { t: 'Upper and lower case letters', ric: 'check_circle', ricc: 'pos', py: 8 },
+      { t: 'At least one number', ric: 'check_circle', ricc: 'pos', py: 8 }, { t: 'At least one symbol', ric: 'check_circle', ricc: 'pos', py: 8 }], { bare: true, nodiv: true }],
+    ['field', { label: 'Confirm new password', value: '••••••••••••', right: 'icon:visibility_off', rto: 'self' }] ],
+    foot: [['Save password', 'primary', 'B17']] },
+  { id: 'B13', name: 'Terms of Service', head: { t: 'Terms of Service' }, blocks: [
+    ['notice', 'Sample text for the demo. Replace with the version approved by NVXO Europe a.s. compliance.', { k: 'warn' }],
+    ['small', 'Last updated 1 September 2026'],
+    ['doc', [['1. Who we are', 'NVXO CEX is operated by NVXO Europe a.s., a company incorporated in the Czech Republic. These terms govern your use of the NVXO CEX app and website.'],
+      ['2. Your account', 'You must be at least 18 years old and complete identity verification before depositing, trading or withdrawing. Keep your password and 2FA device secure.'],
+      ['3. Crypto-asset risks', 'The value of crypto-assets can go down as well as up, and you may lose all the money you put in. Crypto-assets are not covered by deposit guarantee or investor compensation schemes.'],
+      ['4. Fees', 'Trading, deposit and withdrawal fees are shown before you confirm each transaction and in Fees & VIP levels.'],
+      ['5. Complaints', 'You can submit a complaint at any time through Support. We respond within 15 business days.']]] ] },
+  { id: 'B14', name: 'Privacy Policy', head: { t: 'Privacy Policy' }, blocks: [
+    ['notice', 'Sample text for the demo. Replace with the approved privacy policy.', { k: 'warn' }],
+    ['small', 'Last updated 1 September 2026'],
+    ['doc', [['Data controller', 'NVXO Europe a.s. is the controller of the personal data you provide when you use NVXO CEX.'],
+      ['What we collect', 'Identity and contact details, identity documents and selfie images for verification, device and login data, and your transaction history.'],
+      ['Why we use it', 'To open and run your account, meet anti-money-laundering obligations, keep your account secure and, with your consent, send you product news.'],
+      ['How long we keep it', 'We keep verification and transaction records for as long as the law requires, usually 10 years after the end of our relationship.'],
+      ['Your rights', 'You can ask for access, correction, deletion or a copy of your data, and complain to the Czech data protection authority (ÚOOÚ).']]] ] },
+  { id: 'B15', name: 'Account temporarily locked', head: { close: true, backTo: 'B01', t: '' }, align: 'center', vcenter: true, blocks: [
+    ['badge', 'lock'], ['h', 'Account temporarily locked', { align: 'center', s: 24 }],
+    ['p', 'Too many incorrect attempts. For your security, logging in is paused.', { align: 'center' }],
+    ['countdown', { l: 'Try again in', v: '29:41' }] ],
+    foot: [['Reset password', 'primary', 'B10'], ['Contact support', 'outline', 'R02']] },
+  { id: 'B16', name: 'Country code picker', over: 'B02', sheet: { over: 'B02', title: 'Country / region', blocks: [
+    ['search', 'Search country or code'],
+    ['list', [{ t: 'Czechia', r: '+420', sel: 1, to: 'back' }, { t: 'Slovakia', r: '+421', sel: 2, to: 'back' }, { t: 'Germany', r: '+49', sel: 2, to: 'back' },
+      { t: 'Austria', r: '+43', sel: 2, to: 'back' }, { t: 'Poland', r: '+48', sel: 2, to: 'back' }, { t: 'Lithuania', r: '+370', sel: 2, to: 'back' }], { py: 12 }]] } },
+  { id: 'B17', name: 'Password updated', head: null, align: 'center', vcenter: true, blocks: [
+    ['badge', 'success'], ['h', 'Password updated', { align: 'center' }],
+    ['p', 'You can now log in with your new password. For your security, withdrawals are paused for 24 hours.', { align: 'center' }] ],
+    foot: [['Log in', 'primary', 'B01']] }
+];
