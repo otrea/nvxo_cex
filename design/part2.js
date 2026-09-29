@@ -362,13 +362,13 @@ BL.chart = function (p, o) {
   put(p, f, 'fill');
 };
 BL.slider = function (p, o) {
-  var f = box(CW, o.labels === false ? 24 : 42, { name: 'slider' }), pct = o.pct || 0, cc = o.c || 'mint', w = CW - 8;
+  var SW = o.w || CW, f = box(SW, o.labels === false ? 24 : 42, { name: 'slider' }), pct = o.pct || 0, cc = o.c || 'mint', w = SW - 8;
   var tr = rect(w, 4, 'card2', { r: 2 }); f.appendChild(tr); tr.x = 4; tr.y = 10;
   var fi = rect(Math.max(0.1, w * pct), 4, cc, { r: 2 }); f.appendChild(fi); fi.x = 4; fi.y = 10;
   var marks = o.marks || 5;
   for (var i = 0; i < marks; i++) { var x = 4 + w * i / (marks - 1); var on = i / (marks - 1) <= pct; var d = box(12, 12, { r: 3, bg: on ? cc : 'bg', stroke: on ? cc : 'mut' }); d.rotation = 45; f.appendChild(d); d.x = x - 1; d.y = 3; }
   var th = circle(20, 'white', { stroke: cc, sw: 4 }); f.appendChild(th); th.x = 4 + w * pct - 10; th.y = 2;
-  if (o.labels !== false) { var ls = o.labels || ['0%', '25%', '50%', '75%', '100%']; for (var j = 0; j < ls.length; j++) { var t = T(ls[j], { s: 11, c: 'mut' }); f.appendChild(t); t.x = Math.max(0, Math.min(CW - t.width, 4 + w * j / (ls.length - 1) - t.width / 2)); t.y = 26; } }
+  if (o.labels !== false) { var ls = o.labels || ['0%', '25%', '50%', '75%', '100%']; for (var j = 0; j < ls.length; j++) { var t = T(ls[j], { s: 11, c: 'mut' }); f.appendChild(t); t.x = Math.max(0, Math.min(SW - t.width, 4 + w * j / (ls.length - 1) - t.width / 2)); t.y = 26; } }
   put(p, f, 'fill');
 };
 BL.empty = function (p, o, oo, ctx) {

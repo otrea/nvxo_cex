@@ -122,7 +122,7 @@ BL.trade = function (p, o) {
   if (o.type === 'Market') put(L, fieldBox({ value: 'Market price', hh: 40, bg: 'card2' }), 'fill');
   else { var pf = fieldBox({ value: o.price || '67,412.50', hh: 40 }); pf.appendChild(I('remove', { s: 18, c: 'sec' })); pf.appendChild(I('add', { s: 18, c: 'sec' })); put(L, pf, 'fill'); }
   put(L, fieldBox({ ph: o.amount ? null : 'Amount', value: o.amount || null, hh: 40, right: o.base || 'BTC', rc: 'mut' }), 'fill');
-  var sl = AL('v', {}); put(L, sl, 'fill'); BL.slider(sl, { pct: o.pct || 0, labels: false, c: sell ? 'neg' : 'pos' }); sl.children[0].resize(206, 24);
+  BL.slider(L, { pct: o.pct || 0, labels: false, c: sell ? 'neg' : 'pos', w: 206 });
   put(L, fieldBox({ ph: o.total ? null : 'Total', value: o.total || null, hh: 40, right: o.quote || 'USDT', rc: 'mut' }), 'fill');
   var av = AL('h', { justify: 'between' }); av.appendChild(T('Available', { s: 11, c: 'mut' })); av.appendChild(T(sell ? (o.availB || '0.18420 BTC') : (o.availQ || '8,240.12 USDT'), { s: 11, w: 'Medium' })); put(L, av, 'fill');
   var ft = AL('h', { gap: 6, align: 'center' }); var ftt = T('Pay fees in NVXO', { s: 12, c: 'sec' }); put(ft, link(ftt, 'E14'), 'fill'); ft.appendChild(toggle(o.nvxo !== false)); put(L, ft, 'fill');
@@ -142,7 +142,7 @@ function orderbook(o) {
     f.appendChild(link(T(price, { s: 12, mono: true, c: side === 'ask' ? 'neg' : 'pos' }), 'self')); f.appendChild(T(amt, { s: 12, mono: true, c: 'sec', align: 'right' }));
     return f;
   }
-  var fmt = function (v) { return v.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); };
+  var fmt = function (v) { var s = v.toFixed(1).split('.'); return s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + s[1]; };
   var rowsA = [];
   for (var i = n; i >= 1; i--) rowsA.push(r2(fmt(mid + i * 0.5 + (i > 4 ? i : 0)), (rnd() * 0.9 + 0.001).toFixed(4), 'ask'));
   rowsA.forEach(function (x) { put(c, x, 'fill'); });
