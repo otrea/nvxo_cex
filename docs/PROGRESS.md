@@ -22,3 +22,7 @@ design = NVXO dark (SUSE, mint #58F9B0, black), Day theme supported in app.
 Figma builder: design/figma-lib.js + part*.js; the live copy is stored in the Figma file (shared plugin data nvxo/lib_1..5, load order 1,2,3,5,4).
 Extra screens beyond the original map: E06h E06t F06s F11b F13s G03c G03w H01f I02t I06d P15s R02t R04e S01m T05r.
 Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
+
+- Sep 30: horizontal logo spacing fixed (the NVXO/symbol and symbol/CEX gaps were 6.23 and 7.21; both are now 6.72, and the symbol moved +0.49). The vertical logo was already even (3.68/3.70).
+- Sep 30: dark mint removed from both themes; new tab bar (mint pill, no outline); Light Menu/Appearance now show Light; the token sheet's Light row updated.
+- The live builder library in Figma plugin data (lib_1..6) is the source of truth. The local design/*.js copies are older snapshots.
