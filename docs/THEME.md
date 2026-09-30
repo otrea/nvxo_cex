@@ -19,3 +19,5 @@
 | gold (VIP) | #D4B45F | #A8862E |
 | tab bar | #0D0E12 | #F7F7FA |
 Font: SUSE (numbers/addresses SUSE Mono). Icons: Material Icons Round.
+
+Theme switch icon in the header shows the mode you switch *to*: Dark shows a sun (light_mode), Light shows a moon (dark_mode).
