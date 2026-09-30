@@ -47,3 +47,13 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
   - MAX, Paste, Get code, Send and similar show a confirmation.
   - Unlinked switches and checkboxes are tappable too.
 - QA: all 560 screens in both themes rendered with 0 runtime errors. Tap tests passed on E16, Z10, G09, H03, G08, H05, D04, J04, O03 and F02. Typecheck and lint are clean.
+
+## Phase: content screens for every filter (1 Oct 2026), waiting for Jay's approval
+
+- Figma rolled back to plain white/black backgrounds. Gradients stay only on 52 px primary and Buy buttons (THEME.md).
+- 47 new screens per theme for chips, segments and tabs that change content (AUDIT.md, audit v3). All are wired with prototype links. The export index now has 327 pairs, and `exp_new` lists the new codes.
+- Fixes: the loan card order id no longer wraps; G02s "I sell" is active.
+- **Next, after approval only:**
+  1. Export the changed and new screens. Rebuild the export from the pre-gradient base with button gradients only.
+  2. App: remove the root glow. Restrict the landscape variant to real landscape frames: `code+'h'` wrongly maps E06 → E06h (history).
+  3. QA, push, and build 3 APK.

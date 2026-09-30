@@ -54,16 +54,12 @@ Figma components ("03 · Assets & brand"): Logo / NVXO CEX, … black, … verti
 - No outline: the bar sits on the `tab` surface (#0D0E12 / #F7F7FA).
 - The active tab is a 56x30 solid mint pill with a black 22 px icon and an fg SemiBold label. Inactive tabs have mut icons and labels.
 
-## Subtle gradients (1 Oct 2026, "a bit of life")
+## Gradients: big buttons only (1 Oct 2026, Jay's call)
 
-Applied by `tools/figma-gradients.js` to both pages. Every change is recorded in `design/gradients-oct1.txt` and mirrored into the export by `tools/apply-gradients.js`.
+The first pass (screen glow, card sheen, mint circles) was too much and was rolled back in Figma. What stays:
 
 | Where | Dark | Light |
 |---|---|---|
-| Screen background | #000000 + white 6% → 0 over the top 45% | #FFFFFF + #58F9B0 12% → 0 over the top 40% |
-| Hero cards (card fill, ≥330 wide, with a ≥26 px figure) and banners | #1E2028 → #121318, top-left to bottom-right | #FAFAFC → #ECECF2 |
-| Mint balance cards and promo banners (Light) | – | #8CFCCB → #58F9B0, diagonal |
-| Primary mint buttons (40–56 high, ≥120 wide) | #86FCC8 → #58F9B0, top to bottom | same |
-| Large mint circles (≥72, success and status icons) | #8CFCCB → #58F9B0, diagonal | same |
+| Primary and Buy buttons, 52 px high (`button/primary`, `button/buy`) | #86FCC8 → #58F9B0, top to bottom | same |
 
-Not touched: small chips, pills, tags, the tab bar, icon circles, list cards, inputs and notices.
+Everything else is flat. Screen backgrounds are plain #000000 (Dark) and #FFFFFF (Light). Cards, banners, circles, chips, the tab bar and sell buttons are solid. Chart areas keep their original fade.

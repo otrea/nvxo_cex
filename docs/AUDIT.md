@@ -54,3 +54,27 @@ What felt like dead ends on the phone:
    - Price alerts didn't exist. New **E16 · Create price alert** and **E17 · Price alerts**.
    - Unwired controls: attach on G05 and R05 → Z09, gavel on G02 → R02, the LTV info icon on I02 → I09.
 3. Still toast by design: copy, share, open website or explorer, store links, "Reset demo data".
+
+## Audit v3 (1 Oct 2026): taps that only moved a highlight
+
+Jay tested build 1 on the phone (P2P Sell, P2P coin chips, Markets categories). A chip or segment that only moves its highlight while the list stays the same does not count as working. So every control that filters or changes content now opens its own screen, in Dark and Light (47 new screens per theme):
+
+| Control | Screens |
+|---|---|
+| P2P Buy / Sell and coin chips | G01s, G01b/e/n, G01sb/se/sn, plus the full sell flow G02s → G02sr → G03s → G03p → G03v → G04s |
+| Markets categories and sort | D01l, D01d, D01m, D01x; D01p (by price), D01c (by 24h change) |
+| Home and Welcome tabs | C01g/C01n and A05g/A05n were built earlier; they are now wired |
+| Pair picker quotes | D06f, D06e (EUR prices), D06b (BTC prices) |
+| Chart timeframes | D04q 15m, D04o 1h, D04f 4h, D04w 1W (own candles, volume and axis) |
+| Open orders filters | E06b, E06s, E06l, E06k (empty) |
+| Order history range | E06h (7 days), E06hm (30 days), E06hq (3 months) |
+| Notifications, empty state | C03t, C03w, C03s |
+| Simple Earn fixed terms | H01ft, H01fs, H01fn |
+| Subscribe duration | H03x (flexible), H03t (30 days) |
+| My positions | H05f, H05x |
+| Loan orders | I05r (repaid), I05l (liquidated, empty) |
+| Address book | F11t, F11c, F11e |
+
+The specs are in `design/specs/filters-oct1.js`. The engine is `tools/figma-variants.js`, plus `tools/figma-chart.js` for the charts.
+
+Still in place by design: choosing an option inside a form. This covers payment method, amount presets, alert presets, P2P filter sheets, the transaction filter sheet, application ranges, the calendar and toggles. The choice is the state, and Continue/Apply moves on.
