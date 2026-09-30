@@ -35,3 +35,15 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
 - Appearance (Menu → Appearance, C07) switches Automatic / Dark / Light and persists.
 - QA: all 552 screen×theme combinations were screenshotted in Chromium with zero runtime errors. C01 was compared side by side with Figma and is a near pixel match. Typecheck and lint are clean.
 - Known limits: 'self' taps (radio rows, MAX, Paste) give haptic feedback only and do not change state. Inputs are static, as designed. Figma MAX alignment is exported as MIN (rarely used).
+
+## Phase: audit v2 (1 Oct 2026)
+
+- Flow audit (`tools/audit-flows.js`). Every link resolves, there are 0 orphans and 0 screens without an exit. The dead ends came from same-screen ("self") taps and a few real gaps; details in AUDIT.md.
+- New screens in Figma, Dark and Light: Z10 Choose date, E15 Pair menu, E16 Create price alert, E17 Price alerts. 11 controls were wired in each theme.
+- Subtle gradients in Figma and the app (THEME.md): a top glow on every screen, a sheen on hero cards and banners, and a light-to-fresh mint highlight on primary buttons and success circles.
+- App: same-screen taps now have state (`src/render/interact.ts`).
+  - Chips, segments, tabs, radio rows and calendar days select.
+  - Multi-select chips, toggles, checkboxes and stars flip.
+  - MAX, Paste, Get code, Send and similar show a confirmation.
+  - Unlinked switches and checkboxes are tappable too.
+- QA: all 560 screens in both themes rendered with 0 runtime errors. Tap tests passed on E16, Z10, G09, H03, G08, H05, D04, J04, O03 and F02. Typecheck and lint are clean.

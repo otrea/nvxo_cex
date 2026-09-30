@@ -3,13 +3,15 @@
 // the content scrolls, and sheets sit on top of the screen they reference.
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from '@/components/Toast';
 import { CODE, DARK, DNode, HOME_ID, toDark, treeFor } from '@/design/data';
 import { modeLabel, useTheme } from '@/theme/theme';
-import { color, fills } from './paint';
+import { applyState, classify, EMPTY, selfToast, UIState } from './interact';
+import { color, fills, gradient } from './paint';
 import { Env, Node } from './Node';
 
 const DESIGN_W = 393;
@@ -78,7 +80,11 @@ export function Screen({ id, interactive = true }: Props) {
   // landscape variant of a screen (A01 -> A01h) when the phone is turned
   const meta = DARK[id];
   const useId = (landscape && meta && CODE[meta.code + 'h']) || id;
-  const tree = treeFor(useId, light);
+  const base = treeFor(useId, light);
+  // local tap state (selected chips, flipped toggles…) for links that stay on this screen
+  const [ui, setUi] = useState<UIState>(EMPTY);
+  const applied = useMemo(() => (base ? applyState(base, ui, light) : null), [base, ui, light]);
+  const tree = applied?.tree;
 
   // AFTER_TIMEOUT prototype links (splash -> onboarding)
   useEffect(() => {
@@ -107,7 +113,15 @@ export function Screen({ id, interactive = true }: Props) {
           return;
         }
         if (pd === 'toast') { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); toast(toastText(n)); return; }
-        if (pd === 'self' && !n.to) { Haptics.selectionAsync().catch(() => {}); return; }
+        if (pd === 'self' && !n.to) {
+          Haptics.selectionAsync().catch(() => {});
+          const path = applied?.pathOf.get(n);
+          const it = base && path !== undefined ? classify(base, path === '' ? [] : path.split('.').map(Number)) : { kind: 'none' as const };
+          if (it.kind === 'sel') setUi(u => ({ ...u, sel: { ...u.sel, [it.group]: it.target } }));
+          else if (it.kind === 'flip') setUi(u => ({ ...u, flip: { ...u.flip, [it.target]: !u.flip[it.target] } }));
+          else { const m = selfToast(n); if (m) toast(m); }
+          return;
+        }
         if (n.to === 'back' || pd === 'back') { back(); return; }
         const target = n.to ?? (pd && CODE[pd]) ?? undefined;
         if (!target) return;
@@ -115,11 +129,17 @@ export function Screen({ id, interactive = true }: Props) {
         go(target, tabLike ? 'tab' : 'push');
       },
     };
-  }, [meta, interactive, mode, setMode, toast, tree]);
+  }, [meta, interactive, mode, setMode, toast, tree, base, applied]);
 
   if (!tree) return <View style={{ flex: 1, backgroundColor: light ? '#FFFFFF' : '#000000' }} />;
 
-  const bg = color(fills(tree.f)[0]) ?? (light ? '#FFFFFF' : '#000000');
+  const bgFills = fills(tree.f);
+  const bg = color(bgFills[0]) ?? (light ? '#FFFFFF' : '#000000');
+  // screen glow: gradient paints layered over the base colour, fixed to the window
+  const glow = bgFills.slice(1).map((p, i) => {
+    const g = gradient(p);
+    return g ? <LinearGradient key={'g' + i} pointerEvents="none" colors={g.colors as any} locations={g.locations as any} start={g.start} end={g.end} style={StyleSheet.absoluteFill} /> : null;
+  });
 
   // ---- landscape design (A01h): scale the whole frame to fit and centre it ----
   if (tree.w > tree.h) {
@@ -127,6 +147,7 @@ export function Screen({ id, interactive = true }: Props) {
     const e = { ...env, s };
     return (
       <View style={[styles.fill, { backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }]}>
+        {glow}
         <View style={{ width: tree.w * s, height: tree.h * s }}>
           {tree.c?.filter(c => c.n !== 'status bar' && c.n !== 'home indicator').map((c, i) => <Node key={i} n={c} parent={{}} env={e} />)}
         </View>
@@ -162,6 +183,7 @@ export function Screen({ id, interactive = true }: Props) {
 
   return (
     <View style={[styles.fill, { backgroundColor: bg }]}>
+      {glow}
       {refs.map((r, i) => {
         const rid = r.ref ? CODE[r.ref] : undefined;
         return rid && rid !== id ? (
