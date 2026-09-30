@@ -33,7 +33,7 @@ Balance card (home, wallets, asset detail, dashboard): Light = solid fresh-mint 
 | Launch splash, portrait (A01 / A01L) | `cex_logo_vertical.svg` | mint #58F9B0 | black |
 | Launch splash, landscape (A01h / A01hL, 852x393) | `cex_logo_horizontal.svg` | mint | black |
 | Headers, sign-in, About, guest home | `cex_logo_horizontal.svg` | mint | black |
-| NVXO coin | solid circle with the three dots of `nvxo_coin.svg` cut out (dots at 63% scale), no square, no ring | mint | black |
+| NVXO coin | solid circle with the three dots of `nvxo_coin.svg` cut out (dots at 72.5% of the SVG scale, i.e. +15%, centred), no square, no ring | mint | black |
 | App icon / native splash | `cex_symbol.svg` | mint on black | - |
 
 Rule in the app: the JS splash picks the vertical logo when height > width and the horizontal one otherwise (`useWindowDimensions`), so orientation must not be locked to portrait.
