@@ -26,3 +26,12 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
 - Sep 30: horizontal logo spacing fixed (the NVXO/symbol and symbol/CEX gaps were 6.23 and 7.21; both are now 6.72, and the symbol moved +0.49). The vertical logo was already even (3.68/3.70).
 - Sep 30: dark mint removed from both themes; new tab bar (mint pill, no outline); Light Menu/Appearance now show Light; the token sheet's Light row updated.
 - The live builder library in Figma plugin data (lib_1..6) is the source of truth. The local design/*.js copies are older snapshots.
+
+## Phase: clickable demo APK — done (30 Sep 2026)
+
+- Build 1: https://github.com/otrea/nvxo_cex/releases/download/build-1/NVXO-CEX-1.apk (CI run #1, green)
+- All 276 screens × Dark/Light are rendered straight from the Figma export (`src/design/*.json`) by a generic renderer (`src/render/`). If the Figma file changes, re-run the export and the APK follows; there is no hand-coded screen.
+- Every prototype link works. Tabs and segments swap in place, sheets fade in over the screen behind them, copy/share actions show a toast, and splash auto-advances. The splash switches to A01h in landscape. Orientation is not locked.
+- Appearance (Menu → Appearance, C07) switches Automatic / Dark / Light and persists.
+- QA: all 552 screen×theme combinations were screenshotted in Chromium with zero runtime errors. C01 was compared side by side with Figma and is a near pixel match. Typecheck and lint are clean.
+- Known limits: 'self' taps (radio rows, MAX, Paste) give haptic feedback only and do not change state. Inputs are static, as designed. Figma MAX alignment is exported as MIN (rarely used).
