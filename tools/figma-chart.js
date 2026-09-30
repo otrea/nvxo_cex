@@ -20,7 +20,8 @@ function chartFor(frame, { top, step, seed }) {
   // axis
   const y0 = labels[0].y + labels[0].height / 2, y4 = labels[labels.length - 1].y + labels[labels.length - 1].height / 2;
   const bottom = top - step * (labels.length - 1);
-  labels.forEach((t, i) => { t.characters = (top - step * i).toLocaleString('en-US'); });
+  // the plugin sandbox ignores locales, so group thousands by hand
+  labels.forEach((t, i) => { t.characters = String(top - step * i).replace(/\B(?=(\d{3})+(?!\d))/g, ','); t.name = t.characters; });
   const Y = v => y0 + (top - v) / (top - bottom) * (y4 - y0);
   // price walk that ends on the last price and stays inside the axis
   const n = bodies.length, c = [0];
