@@ -43,7 +43,7 @@ Figma components ("03 · Assets & brand"): Logo / NVXO CEX, … black, … verti
 ## Mint rule (Sep 30)
 
 - Mint appears only as the fresh solid #58F9B0: filled buttons, pills, tags, chips and icon circles with black content, and (Dark only) as text or icon colour on black.
-- No dark mint anywhere: no #0E9F63 or #12B886, no translucent mint tints (they read as dark mint on black), and no green gradients.
+- No dark mint anywhere: no #0E9F63 or #12B886, and no translucent mint tints on black (they read as dark mint). The only mint gradients are the light-to-fresh highlights below, which never go darker than #58F9B0.
 - Light: links and accents are black SemiBold; gains are black with a "+" sign, losses are red; candles are black and red; sparklines are black and red.
 - Neutral greys replace tints: order-book depth bars use card2, volume bars use line, success notices and status circles use card, current-row highlights use card2, and onboarding rings are fg at 3% (Light) or 4.5% (Dark).
 - Promo banners: Light is a solid mint card with black content (a black tag and a black icon circle with mint content); Dark is a plain card.
@@ -53,3 +53,17 @@ Figma components ("03 · Assets & brand"): Logo / NVXO CEX, … black, … verti
 
 - No outline: the bar sits on the `tab` surface (#0D0E12 / #F7F7FA).
 - The active tab is a 56x30 solid mint pill with a black 22 px icon and an fg SemiBold label. Inactive tabs have mut icons and labels.
+
+## Subtle gradients (1 Oct 2026, "a bit of life")
+
+Applied by `tools/figma-gradients.js` to both pages. Every change is recorded in `design/gradients-oct1.txt` and mirrored into the export by `tools/apply-gradients.js`.
+
+| Where | Dark | Light |
+|---|---|---|
+| Screen background | #000000 + white 6% → 0 over the top 45% | #FFFFFF + #58F9B0 12% → 0 over the top 40% |
+| Hero cards (card fill, ≥330 wide, with a ≥26 px figure) and banners | #1E2028 → #121318, top-left to bottom-right | #FAFAFC → #ECECF2 |
+| Mint balance cards and promo banners (Light) | – | #8CFCCB → #58F9B0, diagonal |
+| Primary mint buttons (40–56 high, ≥120 wide) | #86FCC8 → #58F9B0, top to bottom | same |
+| Large mint circles (≥72, success and status icons) | #8CFCCB → #58F9B0, diagonal | same |
+
+Not touched: small chips, pills, tags, the tab bar, icon circles, list cards, inputs and notices.
