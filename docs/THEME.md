@@ -21,3 +21,5 @@
 Font: SUSE (numbers/addresses SUSE Mono). Icons: Material Icons Round.
 
 Theme switch icon in the header shows the mode you switch *to*: Dark shows a sun (light_mode), Light shows a moon (dark_mode).
+
+Icon circles: Light = fresh mint #58F9B0 circle with black icon (all action/menu/list icons). Exceptions kept on purpose: warning (orange) and danger (red) icons, grey "inactive/empty" icons, and close (X) buttons. Dark = #1C1D24 circle with mint icon.
