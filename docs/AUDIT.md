@@ -41,3 +41,16 @@ The earlier 8 light samples (section Y) were removed as superseded.
 
 ## Logo update
 Official logos applied: 10 logo placements and 32 NVXO coin marks (Dark), 10 and 31 (Light). Added A01h and A01hL (landscape splash, horizontal logo), wired with the same 1.2 s auto-advance as A01/A01L.
+
+## Audit v2 (1 Oct 2026): dead ends and flow gaps
+
+Method: `node tools/audit-flows.js` over the exported design. It lists tappable-looking elements without links, links wired to `self`/`toast`, unreachable screens and screens without an exit. Every design-code link resolves, there are 0 orphans (only A01h, which the app opens in landscape) and 0 screens without an exit.
+
+What felt like dead ends on the phone:
+1. **252 taps wired to `self`**: chips, segments, toggles, checkboxes, radio rows, timeframes, stars, MAX, Paste and order-book prices. They were correct in Figma but inert in the app, which is now fixed in the app (see PROGRESS).
+2. **Real gaps, fixed in Figma (Dark + Light):**
+   - Calendar icons on F21, O03 and Q02 had no date picker. New **Z10 · Choose date** sheet.
+   - "⋯" on E01, E02 and E08 only showed a toast. New **E15 · Pair menu** sheet (Price alert, Full chart, About, Trading fees, Favourite, Share).
+   - Price alerts didn't exist. New **E16 · Create price alert** and **E17 · Price alerts**.
+   - Unwired controls: attach on G05 and R05 → Z09, gavel on G02 → R02, the LTV info icon on I02 → I09.
+3. Still toast by design: copy, share, open website or explorer, store links, "Reset demo data".
