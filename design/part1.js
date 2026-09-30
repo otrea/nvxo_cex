@@ -131,7 +131,7 @@ function coin(sym, d) {
   if (sym === 'NVXO') {
     var m = COMP['logo / nvxo mark'];
     var f = box(d, d, { r: d / 2, bg: 'black', clip: true, name: 'coin/NVXO' });
-    if (m) { var i = m.createInstance(); i.rescale(d * 0.8 / Math.max(i.width, i.height)); f.appendChild(i); i.x = (d - i.width) / 2; i.y = (d - i.height) / 2; }
+    if (m) { var i = m.createInstance(); i.rescale(d * 0.6 / Math.max(i.width, i.height)); f.appendChild(i); i.x = (d - i.width) / 2; i.y = (d - i.height) / 2; }
     else { var t = T('N', { s: d * 0.5, w: 'Bold', c: 'mint' }); f.appendChild(t); t.x = (d - t.width) / 2; t.y = (d - t.height) / 2; }
     f.strokes = [paint('mint')]; f.strokeWeight = 1;
     return f;

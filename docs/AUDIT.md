@@ -37,3 +37,7 @@ white background, #F2F2F7 cards, #000019 text, mint #58F9B0 buttons/pills/toggle
 mint-coloured text shown as #0E9F63 for readability, dark-ink logo. Audit: 275 screens, 1,482 links,
 0 unresolved, all reachable from the splash, 0 dead ends, 21 flows (one per section).
 The earlier 8 light samples (section Y) were removed as superseded.
+
+
+## Logo update
+Official logos applied: 10 logo placements and 32 NVXO coin marks (Dark), 10 and 31 (Light). Added A01h and A01hL (landscape splash, horizontal logo), wired with the same 1.2 s auto-advance as A01/A01L.
