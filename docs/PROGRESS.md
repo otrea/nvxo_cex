@@ -15,8 +15,10 @@ design = NVXO dark (SUSE, mint #58F9B0, black), Day theme supported in app.
 - [x] 1. Figma reorganised into pages (App / Website / Assets / Archive)
 - [x] 2. All screens built in Figma: 209 app screens (A–Z) + design system (00) + 8 light samples (Y); IDs in docs/FIGMA_NODES.md
 - [x] 3. Figma prototype wired and audited: 275 screens, 1,497 links, 0 unresolved, all reachable, 0 dead ends (docs/AUDIT.md)
+- [x] 3b. Full Light version in Figma (page 04, 275 screens, wired + audited; docs/THEME.md)
 - [ ] 4. Expo app: scaffold + CI → design system → screens by section (commit per section)
 - [ ] 5. APK build, visual QA vs Figma, flow walkthrough, test notes
 
 Figma builder: design/figma-lib.js + part*.js; the live copy is stored in the Figma file (shared plugin data nvxo/lib_1..5, load order 1,2,3,5,4).
 Extra screens beyond the original map: E06h E06t F06s F11b F13s G03c G03w H01f I02t I06d P15s R02t R04e S01m T05r.
+Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).

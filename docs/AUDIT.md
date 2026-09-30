@@ -30,3 +30,10 @@ website/whitepaper/explorer, app store, camera/file chooser after Z09).
 ## Known prototype simplification
 Detail screens use one representative record: every pair opens the BTC/USDT detail and trade screen,
 withdrawal rows open the same USDT withdrawal. In the app these screens show the item that was tapped.
+
+## Light version (30 Sep 2026)
+Page **04 · CEX App · Light**: all 275 screens as `<ID>L · …` (e.g. `C01L · Home`), NVXO Pay colour style:
+white background, #F2F2F7 cards, #000019 text, mint #58F9B0 buttons/pills/toggles with **black** text,
+mint-coloured text shown as #0E9F63 for readability, dark-ink logo. Audit: 275 screens, 1,482 links,
+0 unresolved, all reachable from the splash, 0 dead ends, 21 flows (one per section).
+The earlier 8 light samples (section Y) were removed as superseded.
