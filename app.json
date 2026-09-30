@@ -15,7 +15,7 @@
     "android": {
       "package": "io.nvxo.cex",
       "adaptiveIcon": {
-        "backgroundColor": "#000000",
+        "backgroundColor": "#58F9B0",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

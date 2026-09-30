@@ -48,7 +48,7 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
   - Unlinked switches and checkboxes are tappable too.
 - QA: all 560 screens in both themes rendered with 0 runtime errors. Tap tests passed on E16, Z10, G09, H03, G08, H05, D04, J04, O03 and F02. Typecheck and lint are clean.
 
-## Phase: content screens for every filter (1 Oct 2026), waiting for Jay's approval
+## Phase: content screens for every filter (1 Oct 2026), approved by Jay
 
 - Figma rolled back to plain white/black backgrounds. Gradients stay only on 52 px primary and Buy buttons (THEME.md).
 - 47 new screens per theme for chips, segments and tabs that change content (AUDIT.md, audit v3). All are wired with prototype links. The export index now has 327 pairs, and `exp_new` lists the new codes.
@@ -57,3 +57,12 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
   1. Export the changed and new screens. Rebuild the export from the pre-gradient base with button gradients only.
   2. App: remove the root glow. Restrict the landscape variant to real landscape frames: `code+'h'` wrongly maps E06 → E06h (history).
   3. QA, push, and build 3 APK.
+
+## Phase: build 3 APK (1 Oct 2026) — done
+
+- Jay approved the Figma and asked for the APK plus a fixed app icon ("now black frame").
+- Exported the 69 new or changed pairs from Figma (654 screens). The rest came from the pre-gradient base with button gradients only (`tools/apply-gradients.js <dir> <baseDir>`). Result: 292 gradient fills, all the 52 px button gradient, and 0 screen-background gradients.
+- App: the screen glow is gone, so backgrounds are plain white or black. Landscape swaps only to real landscape frames (A01h). E06 no longer turns into E06h.
+- App icon: full-bleed mint with the black CEX glyph (no black frame). The Android adaptive icon has a mint background layer, the glyph as foreground in the safe zone, and a monochrome glyph.
+- Audit: the active segment pill is no longer counted as a dead button. Result: DEAD 44 (24 text links, 19 header icons, 1 row), 0 no-exit, 1 orphan (unchanged).
+- If the export transcript gets compacted, re-queue the missing pairs. Set `exp_index` in Figma to the missing ones, set `exp_seen` to the svg keys already collected, then run `MIN_BN=<first> node tools/collect-export.js`.

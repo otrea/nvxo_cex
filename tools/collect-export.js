@@ -11,7 +11,7 @@ for (const line of fs.readFileSync(T, 'utf8').split('\n')) {
     if (b.type !== 'tool_result') continue;
     const parts = Array.isArray(b.content) ? b.content.map(x => x.text || '').join('') : String(b.content || '');
     const m = parts.match(/EXPB\|(\d+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)/); if (!m) continue;
-    const [_, bn, sl, n, data] = m; (batches[bn] = batches[bn] || { n: +n, s: {} }).s[sl] = data;
+    const [_, bn, sl, n, data] = m; if (+bn < +(process.env.MIN_BN || 0)) continue; (batches[bn] = batches[bn] || { n: +n, s: {} }).s[sl] = data;
   }
 }
 fs.mkdirSync(OUT, { recursive: true });

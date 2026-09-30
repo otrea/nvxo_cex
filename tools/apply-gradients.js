@@ -1,6 +1,8 @@
 // Applies the Figma gradient pass (tools/figma-gradients.js) and the audit-v2 link fixes to an existing export,
 // using the per-screen records saved from Figma (design/gradients-oct1.txt), so 552 screens need no re-export.
-// Usage: node tools/apply-gradients.js <exportDir>   (reads/writes screens.json in place)
+// Usage: node tools/apply-gradients.js <exportDir> [baseDir]   (reads/writes screens.json in place)
+// Build 3: only the 52px primary/buy button gradient ('v', h>=48) is kept; background glows and card/badge
+// gradients are dropped. Screens that differ from <baseDir> were re-exported from Figma and are left untouched.
 const fs = require('fs'), path = require('path');
 const DIR = process.argv[2];
 const sc = JSON.parse(fs.readFileSync(path.join(DIR, 'screens.json'), 'utf8'));
@@ -44,12 +46,16 @@ function diff(a, b) {
 }
 const clone = x => JSON.parse(JSON.stringify(x));
 const bad = [];
+const ONLY = new Set((process.env.ONLY || 'v').split(','));
+const MINH = +(process.env.MINH || 48);
 function apply(tree, list, label) {
   for (const [p, k] of list) {
+    if (!ONLY.has(k)) continue;
     if (p === '') { const base = Array.isArray(tree.f) ? tree.f[0] : tree.f; tree.f = [base, P[k]]; continue; }
     let n = tree; for (const i of p.split('.')) { n = n && n.c && n.c[+i]; }
     const f0 = n && n.f && n.f[0];
     if (!n || !(n.t === 'F' || n.t === 'E') || typeof f0 !== 'string' || !BASE[k].includes(f0)) { bad.push(label + ' ' + p + ' ' + k + ' got ' + (n ? n.t + ' ' + JSON.stringify(n.f) : 'none')); continue; }
+    if (k === 'v' && n.h < MINH) continue;
     n.f = [P[k]];
   }
 }
@@ -73,6 +79,11 @@ function fixLinks(tree, list, light) {
 }
 // ---- run ----
 const NEW = new Set(['2712:1047', '2712:1310', '2712:1383', '2712:1443', '2713:2305', '2713:2780', '2713:2855', '2713:2102']);
+if (process.argv[3]) { // skip everything that was re-exported (already carries Figma's current fills and links)
+  const base = JSON.parse(fs.readFileSync(path.join(process.argv[3], 'screens.json'), 'utf8'));
+  for (const id in sc) if (!base[id] || JSON.stringify(base[id]) !== JSON.stringify(sc[id])) { NEW.add(id); if (sc[id].base) NEW.add(sc[id].base); }
+  for (const id in sc) if (sc[id].base && NEW.has(sc[id].base)) NEW.add(id);
+}
 let dn = 0, ln = 0, links = 0;
 for (const id in sc) {
   const s = sc[id]; if (s.base || NEW.has(id)) continue;

@@ -14,7 +14,9 @@ function kind(n, ctx) {
   if (n.t === 'F') {
     const f = fill(n);
     const hasT = (n.c || []).some(c => c.t === 'T' || (c.t === 'F' && (c.c || []).some(d => d.t === 'T')));
-    if (n.lm === 'H' && n.h >= 36 && n.h <= 60 && n.w >= 70 && hasT && (f === MINT || NEG.includes(f) || (n.s && !f)) && n.r >= 8 && tx.length <= 3 && !ic.includes('search')) return 'button';
+    // the selected pill of a segmented control (siblings are same-height text pills) is the current state, not a button
+    const seg = ctx.parent && (ctx.parent.c || []).filter(c => c !== n && c.t === 'F' && Math.abs(c.h - n.h) <= 2 && (c.c || []).some(d => d.t === 'T')).length >= 1 && !/^button\//.test(n.n || '');
+    if (!seg && n.lm === 'H' && n.h >= 36 && n.h <= 60 && n.w >= 70 && hasT && (f === MINT || NEG.includes(f) || (n.s && !f)) && n.r >= 8 && tx.length <= 3 && !ic.includes('search')) return 'button';
     if (n.lm === 'H' && ic.includes('chevron_right') && n.w > 200) return 'row';
     if (n.lm === 'H' && (ic.includes('expand_more') || ic.includes('keyboard_arrow_down')) && n.h >= 40) return 'dropdown';
     if (n.lm === 'H' && n.h >= 36 && n.h <= 44 && n.w <= 44 && n.r >= 16 && ic.length === 1 && ctx.inHeader) return 'header-icon';
@@ -31,7 +33,7 @@ function walk(n, s, ctx) {
   const k = !ctx.inLinked && !linked(n) ? kind(n, ctx) : null;
   if (k) { dead.push([code(s), k, texts(n).join(' | ').slice(0, 70)]); if (k !== 'header-icon' || n.t === 'F') return; }
   const f = n.t === 'F' ? fill(n) : null;
-  const c2 = { inLinked: ctx.inLinked || linked(n), inHeader: ctx.inHeader || n.n === 'header', onMint: ctx.onMint || f === MINT, parentFill: f || ctx.parentFill, inTab: ctx.inTab || n.n === 'tab bar' };
+  const c2 = { parent: n, inLinked: ctx.inLinked || linked(n), inHeader: ctx.inHeader || n.n === 'header', onMint: ctx.onMint || f === MINT, parentFill: f || ctx.parentFill, inTab: ctx.inTab || n.n === 'tab bar' };
   (n.c || []).forEach(c => walk(c, s, c2));
 }
 dark.forEach(s => walk(s.tree, s, {}));
