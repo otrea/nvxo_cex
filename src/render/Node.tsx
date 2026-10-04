@@ -3,8 +3,8 @@
 // inside its parent, exactly like Figma. All design units are multiplied by `s`.
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { memo } from 'react';
-import { Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { memo, useEffect, useRef, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { DNode, Seg, SVG } from '@/design/data';
 import { color, fills, gradient } from './paint';
@@ -22,6 +22,9 @@ export type Env = {
   apLabel?: string;
   /** current appearance, as the C07 row label */
   mode?: string;
+  /** bumped when the app sets a field value (½, ×2, steppers…) so focused inputs take it */
+  rev?: number;
+  onField?: (k: string, v: string) => void;
 };
 
 type Parent = { lm?: 'H' | 'V' } | null;
@@ -167,6 +170,47 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   );
 }
 
+/** An input field drawn in the design: the text node becomes a TextInput in the same type style. */
+function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
+  const f = n.in!;
+  const s = env.s;
+  const g = n.sg![0];
+  const [val, setVal] = useState(f.v);
+  const focused = useRef(false);
+  const lastRev = useRef(env.rev);
+  useEffect(() => {
+    // follow values the app sets, but never fight the user's typing
+    if (!focused.current || lastRev.current !== env.rev) setVal(f.v);
+    lastRev.current = env.rev;
+  }, [f.v, env.rev]);
+  const base = segStyle(g, s);
+  const st: TextStyle = { ...(pos as TextStyle), ...base, color: f.vc, includeFontPadding: false };
+  delete st.height;
+  delete st.lineHeight;
+  if (!env.interactive) {
+    return <Text style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || f.ph}</Text>;
+  }
+  return (
+    <TextInput
+      value={val}
+      onChangeText={t => { setVal(t); env.onField?.(f.k, t); }}
+      onFocus={() => { focused.current = true; }}
+      onBlur={() => { focused.current = false; }}
+      placeholder={f.ph}
+      placeholderTextColor={color(g[3])}
+      selectionColor="#58F9B0"
+      cursorColor="#58F9B0"
+      keyboardType={f.kind === 'num' ? (f.dec || /,/.test(f.v) ? 'decimal-pad' : 'number-pad') : 'default'}
+      secureTextEntry={f.kind === 'secure'}
+      autoCapitalize="none"
+      autoCorrect={false}
+      returnKeyType={f.kind === 'search' ? 'search' : 'done'}
+      underlineColorAndroid="transparent"
+      style={[st, { paddingVertical: 0, paddingHorizontal: 0, margin: 0, minWidth: 40 * s, height: Math.max(n.h || 0, g[2] * 1.4) * s }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as any)]}
+    />
+  );
+}
+
 function IconNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   const s = env.s;
   let ic = n.ic ?? 'help';
@@ -202,7 +246,7 @@ export const Node = memo(function Node({ n, parent, env }: { n: DNode; parent: P
   const cenv = childEnv(n, env);
 
   let el: React.ReactElement | null = null;
-  if (n.t === 'T') el = <TextNode n={n} pos={link ? {} : pos} env={cenv} />;
+  if (n.t === 'T') el = n.in ? <FieldText n={n} pos={pos} env={cenv} /> : <TextNode n={n} pos={link ? {} : pos} env={cenv} />;
   else if (n.t === 'I') el = <IconNode n={n} pos={link ? {} : pos} env={cenv} />;
   else if (n.t === 'S') {
     const xml = n.svg ? SVG[n.svg] : undefined;

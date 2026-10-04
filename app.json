@@ -39,6 +39,13 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "NVXO CEX uses your photos to attach screenshots to support tickets.",
+          "cameraPermission": "NVXO CEX uses the camera to attach photos to support tickets."
+        }
       ]
     ],
     "experiments": {

@@ -67,7 +67,7 @@ export function classify(tree: DNode, path: number[]): Interaction {
 }
 
 // ---------- restyling ----------
-function restyle(t: DNode, src: DNode): DNode {
+export function restyle(t: DNode, src: DNode): DNode {
   const o: DNode = { ...t, f: src.f, s: src.s, op: src.op };
   if (t.t === 'T' && src.t === 'T' && t.sg && src.sg) o.sg = t.sg.map((g, i) => [g[0], ...src.sg![Math.min(i, src.sg!.length - 1)].slice(1)] as Seg);
   if (t.t === 'I' && src.t === 'I') { o.f = src.f; if (/radio|check/.test(src.ic ?? '')) o.ic = src.ic; }

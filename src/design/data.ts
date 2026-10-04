@@ -23,6 +23,25 @@ export type DNode = {
   sd?: [string, number, number, number, number];
   c?: DNode[];
   ref?: string;
+  // added at runtime by src/render/transform.ts
+  /** editable field (on the field's text node) */
+  in?: Field;
+  /** app action for a tap, e.g. "fav BTC", "pick camera", "step f0 1" */
+  ax?: string;
+};
+export type Field = {
+  k: string;
+  v: string;
+  ph: string;
+  kind: 'num' | 'text' | 'secure' | 'search';
+  /** colour of typed text */
+  vc: string;
+  dec: number;
+  /** a change re-renders the screen (search, live totals, store-bound) */
+  r?: 1;
+  bind?: 'pendAmount';
+  /** has − / + steppers */
+  stp?: 1;
 };
 type RawScreen = { id: string; name: string; tree?: DNode; base?: string; patch?: any };
 
