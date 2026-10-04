@@ -66,3 +66,8 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
 - App icon: full-bleed mint with the black CEX glyph (no black frame). The Android adaptive icon has a mint background layer, the glyph as foreground in the safe zone, and a monochrome glyph.
 - Audit: the active segment pill is no longer counted as a dead button. Result: DEAD 44 (24 text links, 19 header icons, 1 row), 0 no-exit, 1 orphan (unchanged).
 - If the export transcript gets compacted, re-queue the missing pairs. Set `exp_index` in Figma to the missing ones, set `exp_seen` to the svg keys already collected, then run `MIN_BN=<first> node tools/collect-export.js`.
+
+## Phase: tester comments 4 Oct 2026 (14 items, PDF) → build 4
+- [x] 1. Figma: help articles R06w/R06v/R06t/R06f, R02a (file attached), R01 topics relinked, Markets row stars → self. Exported (664 screens).
+- [x] 2. Report: Claude Docs "NVXO CEX — tester comments, change report (build 4)" (per-comment table + Figma changes; app section filled after build).
+- [ ] 3. App (src/render): search inputs filter lists; bet ½/×2 + editable bet; trade price ±/typing, Buy/Sell in place; favourites store (rows, D04 star, D01f list); variant tabs/segments/timeframes replace history and keep scroll; navigating to a screen already in history pops back to it (R03 Done); coin context for pair detail (tiles/rows); P2P filters (currency, amount, payment method); country picker selection; real attachment pickers (expo-image-picker / expo-document-picker) → R02a. Then QA, push, build 4.
