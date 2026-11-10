@@ -51,6 +51,7 @@ function base(n, parentAL) {
   if (n.opacity != null && n.opacity < 1) o.op = R(n.opacity * 100) / 100;
   if (n.rotation) o.rot = R(n.rotation);
   link(n, o);
+  if (n.effects && n.effects.length) { const fx = []; for (const ef of n.effects) { if (ef.visible === false) continue; if (ef.type === 'DROP_SHADOW' || ef.type === 'INNER_SHADOW') fx.push([ef.type[0] === 'I' ? 'i' : 'd', hx(ef.color), R(ef.color.a * 100) / 100, R(ef.offset.x), R(ef.offset.y), R(ef.radius), R(ef.spread || 0)]); if (ef.type === 'LAYER_BLUR') o.bl = R(ef.radius); } if (fx.length) o.fx = fx; }
   if (n.name && NAMED.test(n.name)) o.n = n.name;
   return o;
 }
@@ -62,7 +63,7 @@ async function node(n, parentAL, depth) {
   if (n.type === 'TEXT') {
     if (!n.characters.length) return null;
     const f0 = n.getRangeFontName(0, 1);
-    if (f0.family === 'Material Icons Round') { o.t = 'I'; o.ic = n.characters; o.fs = R(n.getRangeFontSize(0, 1)); const p = paints(n.getRangeFills(0, 1)); if (p) o.f = p[0]; return o; }
+    if (f0.family === 'Material Icons Round' || f0.family === 'Material Symbols Sharp') { o.t = 'I'; o.ic = n.characters; o.fs = R(n.getRangeFontSize(0, 1)); const p = paints(n.getRangeFills(0, 1)); if (p) o.f = p[0]; return o; }
     o.t = 'T';
     const segs = n.getStyledTextSegments(['fontName', 'fontSize', 'fills', 'letterSpacing', 'lineHeight', 'textDecoration']);
     o.sg = segs.map(s => {

@@ -84,3 +84,15 @@ soft raised surfaces instead of outlines, floating tab bar, Material Symbols Sha
 
 Checkpoint 10 Nov 02:05: verified in Figma — every section A–Z on both pages uses Material Symbols Sharp (0 Round left),
 Day roots #f2f2f7, section A = v3 frames (header/content/footer/tab bar). Next: step 3 export.
+
+### Step 3 export — how it runs (resume notes)
+- Figma plugin data: `drv2` = export driver (deflate, EXPZ slices of 46 KB), `ff` = deflate lib, `exp` = exporter
+  (Sharp icons → t:'I', `fx` inset/drop shadows, `bl` layer blur). State: `exp_pos` (next pair), `exp_k`=40, `exp_bn`
+  (last batch, started at 800 → first batch 801), `exp_slice`/`exp_nsl`, `exp_seen` (svg hashes already emitted;
+  `exp_seen0` = the 382 keys of the build-4 svg.json).
+- Each call: `return await new AF('figma', G('drv2'))(figma)` → one EXPZ slice. Then `tools/v3-collect.sh` copies slices
+  into design/export-v3/raw (committed) and merges into design/export-v3/{screens,svg}.json.
+- Resume in a new session: run the driver until `EXPDONE`, then collect. A raw slice that is missing (collector prints
+  `missing bn:sl`) can be re-emitted by setting `exp_bn`=bn, `exp_slice`=sl in Figma only while that batch is the
+  latest one; otherwise set `exp_pos` back to that batch's start (40 × (bn−801)) and continue.
+- Do NOT run tools/apply-gradients.js for v3: v3 cards use subtle gradients on purpose.
