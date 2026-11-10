@@ -76,8 +76,11 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
 ## Phase: v3 rollout (10 Nov 2026) → build 5
 Source: Figma pages "06 · v3 Final · Dark" / "07 · v3 Final · Day" (section A redesigned: square 2.8% radii,
 soft raised surfaces instead of outlines, floating tab bar, Material Symbols Sharp, SUSE Mono data, Day = #F2F2F7).
-- [ ] 1. Figma: restyle all screens on pages 01/04 in place (tools/figma-v3.js dark, tools/figma-v3-day.js derives Day
+- [x] 1. Figma: restyle all screens on pages 01/04 in place (tools/figma-v3.js dark, tools/figma-v3-day.js derives Day
       from Dark node-for-node). Section C done + checked.
-- [ ] 2. Figma: section A replaced by the v3 Final frames (structured header/content/tab bar, links wired).
+- [x] 2. Figma: section A replaced by the v3 Final frames (structured header/content/tab bar, links wired).
 - [ ] 3. Export (exporter: Sharp icons, inner shadows, layer blur) → src/design.
 - [ ] 4. App renderer: inset/drop shadows, glow blur, floating tab bar, Material Symbols Sharp font. QA, APK build 5.
+
+Checkpoint 10 Nov 02:05: verified in Figma — every section A–Z on both pages uses Material Symbols Sharp (0 Round left),
+Day roots #f2f2f7, section A = v3 frames (header/content/footer/tab bar). Next: step 3 export.
