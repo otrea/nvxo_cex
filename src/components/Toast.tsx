@@ -30,7 +30,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {msg ? (
         <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: 'flex-end', alignItems: 'center', paddingBottom: insets.bottom + 96 }]}>
           <Animated.View style={[styles.toast, light ? styles.tl : styles.td, { opacity: op }]}>
-            <Text style={[styles.txt, { color: light ? '#FFFFFF' : '#000000' }]}>{msg}</Text>
+            <Text allowFontScaling={false} style={[styles.txt, { color: light ? '#FFFFFF' : '#000000' }]}>{msg}</Text>
           </Animated.View>
         </View>
       ) : null}

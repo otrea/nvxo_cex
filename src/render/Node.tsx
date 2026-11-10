@@ -180,11 +180,17 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   if (env.apLabel && sg.length === 1 && /^(Dark|Light|Automatic)$/.test(sg[0][0])) sg = [[env.apLabel, ...sg[0].slice(1)] as Seg];
   const auto = !n.ar; // WIDTH_AND_HEIGHT: hug
   const st: TextStyle = { ...(pos as TextStyle), includeFontPadding: false };
+  const oneLine = auto && !sg.some(g => g[0].includes('\n'));
   if (auto && st.position === 'absolute') {
-    // absolute hug text: give it a touch of slack so font metrics never force a wrap
-    st.width = (n.w + 2) * s;
-    if (n.ta === 'C') st.left = ((n.x ?? 0) - 1) * s;
-    else if (n.ta === 'R') st.left = ((n.x ?? 0) - 2) * s;
+    // absolute hug text: never let font metrics force a wrap (a wrapped chip label gets clipped).
+    // Left-aligned labels take their natural width; centred / right-aligned ones get room on both sides.
+    if (oneLine && (!n.ta || n.ta === 'L')) delete st.width;
+    else {
+      const slack = oneLine ? 12 : 2;
+      st.width = (n.w + slack) * s;
+      if (n.ta === 'C') st.left = ((n.x ?? 0) - slack / 2) * s;
+      else if (n.ta === 'R') st.left = ((n.x ?? 0) - slack) * s;
+    }
     delete st.height;
   }
   if (n.ar === 'H') delete st.height;
@@ -192,11 +198,11 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   if (n.va === 'C') st.textAlignVertical = 'center';
   if (n.va === 'B') st.textAlignVertical = 'bottom';
   if (sg.length === 1) {
-    return <Text style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (auto ? 0 : undefined)}>{sg[0][0]}</Text>;
+    return <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine ? 1 : auto ? 0 : undefined)}>{sg[0][0]}</Text>;
   }
   return (
-    <Text style={[segStyle(sg[0], s), st]} numberOfLines={n.tr}>
-      {sg.map((g, i) => <Text key={i} style={segStyle(g, s)}>{g[0]}</Text>)}
+    <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine ? 1 : undefined)}>
+      {sg.map((g, i) => <Text key={i} allowFontScaling={false} style={segStyle(g, s)}>{g[0]}</Text>)}
     </Text>
   );
 }
@@ -219,10 +225,11 @@ function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   delete st.height;
   delete st.lineHeight;
   if (!env.interactive) {
-    return <Text style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || f.ph}</Text>;
+    return <Text allowFontScaling={false} style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || f.ph}</Text>;
   }
   return (
     <TextInput
+      allowFontScaling={false}
       value={val}
       onChangeText={t => { setVal(t); env.onField?.(f.k, t); }}
       onFocus={() => { focused.current = true; }}
