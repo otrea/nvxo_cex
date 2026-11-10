@@ -95,8 +95,8 @@ async function node(n, parentAL, depth) {
     if (al) {
       o.lm = n.layoutMode[0]; const p = [n.paddingTop, n.paddingRight, n.paddingBottom, n.paddingLeft].map(R); if (p.some(v => v)) o.p = p;
       if (n.itemSpacing) o.g = R(n.itemSpacing);
-      const pa = n.primaryAxisAlignItems === 'SPACE_BETWEEN' ? 'B' : n.primaryAxisAlignItems[0]; if (pa !== 'M') o.pa = pa;
-      const ca = n.counterAxisAlignItems === 'BASELINE' ? 'L' : n.counterAxisAlignItems[0]; if (ca !== 'M') o.ca = ca;
+      const pa = n.primaryAxisAlignItems === 'SPACE_BETWEEN' ? 'B' : n.primaryAxisAlignItems === 'MAX' ? 'X' : n.primaryAxisAlignItems[0]; if (pa !== 'M') o.pa = pa;
+      const ca = n.counterAxisAlignItems === 'BASELINE' ? 'L' : n.counterAxisAlignItems === 'MAX' ? 'X' : n.counterAxisAlignItems[0]; if (ca !== 'M') o.ca = ca;
       if (n.layoutWrap === 'WRAP') { o.wr = 1; o.cg = R(n.counterAxisSpacing || 0); }
     }
     const fx = (n.effects || []).find(e => e.type === 'DROP_SHADOW' && e.visible !== false); if (fx) o.sd = [hx(fx.color), R(fx.color.a * 100) / 100, R(fx.offset.x), R(fx.offset.y), R(fx.radius)];

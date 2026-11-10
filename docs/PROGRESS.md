@@ -100,3 +100,10 @@ Day roots #f2f2f7, section A = v3 frames (header/content/footer/tab bar). Next: 
 Checkpoint 10 Nov 09:30: export installed into src/design (391 svgs). Icon font assets/fonts/MaterialSymbolsSharp.ttf
 (tools/build-icons.py, 164 icons, 23 KB) + src/render/icons.json. Renderer: fx → boxShadow (inset + stacked), bl ellipses →
 radial-gradient Glow, floating tab bar (absolute, content padded under it). Next: web QA, then APK build 5.
+
+## Build 6 — QA sweep fixes (2026-11-10)
+- Text no longer scales with Android system font size (allowFontScaling off); single-line labels never wrap ("Whitelist", "Face ID" chips on A04).
+- Copy fixes mirrored from Figma (no "regulated exchange" claim, 4-decimal ETH amounts, backup-key wording, "any time").
+- Exporter bug: Figma MAX alignment was dropped, so right-aligned amounts/prices rendered left. Fixed exporter (`'X'`), patched 337 frames in 91 screens via tools/fix-max-align.js, renderer maps X → flex-end.
+- Clipped horizontal rows of hug-width items (tab strips, chip rows) render as horizontal scrollers (O01 history tabs).
+- Clipping audit on all screens, both themes: 0 issues.

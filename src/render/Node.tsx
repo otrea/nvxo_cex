@@ -4,7 +4,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { memo, useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import Svg, { Defs, Ellipse, RadialGradient, Stop, SvgXml } from 'react-native-svg';
 import ICONS from './icons.json';
 import { DNode, Seg, SVG } from '@/design/data';
@@ -316,12 +316,28 @@ export const Node = memo(function Node({ n, parent, env }: { n: DNode; parent: P
       if (n.g) st.gap = n.g * s;
       if (n.pa === 'C') st.justifyContent = 'center';
       else if (n.pa === 'B') st.justifyContent = 'space-between';
+      else if (n.pa === 'X') st.justifyContent = 'flex-end';
       if (n.ca === 'C') st.alignItems = 'center';
       else if (n.ca === 'L') st.alignItems = 'baseline';
+      else if (n.ca === 'X') st.alignItems = 'flex-end';
       else st.alignItems = 'flex-start';
       if (n.wr) { st.flexWrap = 'wrap'; st.rowGap = (n.cg ?? 0) * s; }
     }
     const kids = n.c?.map((c, i) => <Node key={i} n={c} parent={n.t === 'F' ? { lm: n.lm } : { lm: undefined }} env={cenv} />);
+    // A clipped horizontal row of hug-width items (tab strips, chip rows) is a horizontal scroller in the design.
+    if (!link && n.t === 'F' && n.lm === 'H' && n.cl && !n.wr && n.pa !== 'B' && (n.c?.length ?? 0) >= 3
+      && n.c!.every(c => c.x == null && !c.gr && (c.z ?? 'F')[0] === 'H')) {
+      const { flexDirection, paddingTop, paddingRight, paddingBottom, paddingLeft, gap, justifyContent, alignItems, ...outer } = st;
+      return (
+        <View style={outer} pointerEvents={env.interactive ? 'auto' : 'none'}>
+          {bg.layers}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ flexDirection: 'row', paddingTop, paddingRight, paddingBottom, paddingLeft, gap, justifyContent, alignItems, flexGrow: 1 }}>
+            {kids}
+          </ScrollView>
+        </View>
+      );
+    }
     if (link) {
       return (
         <Pressable
