@@ -296,10 +296,10 @@ export function Screen({ id, interactive = true }: Props) {
     };
   }, [meta, id, interactive, mode, setMode, toast, tree, base, applied, rev, onField, doX]);
 
-  if (!tree) return <View style={{ flex: 1, backgroundColor: light ? '#FFFFFF' : '#000000' }} />;
+  if (!tree) return <View style={{ flex: 1, backgroundColor: light ? '#F2F2F7' : '#000000' }} />;
 
   // screen background stays plain (black in Dark, #F2F2F7 in Day) — v3 surfaces carry the depth
-  const bg = color(fills(tree.f)[0]) ?? (light ? '#FFFFFF' : '#000000');
+  const bg = color(fills(tree.f)[0]) ?? (light ? '#F2F2F7' : '#000000');
 
   // ---- landscape design (A01h): scale the whole frame to fit and centre it ----
   if (tree.w > tree.h) {
@@ -399,7 +399,8 @@ export function Screen({ id, interactive = true }: Props) {
         <View style={[StyleSheet.absoluteFill, { alignItems: 'center' }]} pointerEvents="box-none">
           <View style={{ width: colW, flex: 1 }} pointerEvents="box-none">
             <View style={{ position: 'absolute', left: (floatBar.x ?? 0) * s, width: floatBar.w * s, height: floatBar.h * s, bottom: barLift }} pointerEvents="box-none">
-              <Node n={{ ...floatBar, x: 0, y: 0 }} parent={{}} env={e} />
+              {/* Figma frosts the bar with a background blur; on device it is drawn opaque so content never shows through */}
+              <Node n={{ ...floatBar, x: 0, y: 0, f: fills(floatBar.f).map(p => (Array.isArray(p) ? p[0] : p)) as any }} parent={{}} env={e} />
             </View>
           </View>
         </View>

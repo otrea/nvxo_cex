@@ -8,7 +8,7 @@ type Ctx = { mode: Mode; light: boolean; setMode: (m: Mode) => void };
 const KEY = 'nvxo-cex.appearance';
 const ThemeCtx = createContext<Ctx>({ mode: 'system', light: false, setMode: () => {} });
 
-export const BG = { dark: '#000000', light: '#FFFFFF' };
+export const BG = { dark: '#000000', light: '#F2F2F7' }; // v3 Day surface
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const sys = useColorScheme();

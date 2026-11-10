@@ -80,7 +80,7 @@ soft raised surfaces instead of outlines, floating tab bar, Material Symbols Sha
       from Dark node-for-node). Section C done + checked.
 - [x] 2. Figma: section A replaced by the v3 Final frames (structured header/content/tab bar, links wired).
 - [x] 3. Export (exporter: Sharp icons, inner shadows, layer blur) → src/design. 332 pairs (664 screens), batches 801–809.
-- [ ] 4. App renderer: inset/drop shadows, glow blur, floating tab bar, Material Symbols Sharp font. QA, APK build 5.
+- [x] 4. App renderer: inset/drop shadows, glow blur, floating tab bar, Material Symbols Sharp font. Web QA Dark+Day OK (floating bar drawn opaque: no background blur on device). APK build 5 pushed.
 
 Checkpoint 10 Nov 02:05: verified in Figma — every section A–Z on both pages uses Material Symbols Sharp (0 Round left),
 Day roots #f2f2f7, section A = v3 frames (header/content/footer/tab bar). Next: step 3 export.
