@@ -72,3 +72,12 @@ Figma library parts now 1,2,3,5,6,4 (lib_6 = light recolour routine BL.__light).
 - [x] 2. Report: Claude Docs "NVXO CEX — tester comments, change report (build 4)" (per-comment table + Figma changes; app section filled after build).
 - [x] 3. App (src/render): search inputs filter lists; bet ½/×2 + editable bet; trade price ±/typing, Buy/Sell in place; favourites store (rows, D04 star, D01f list); variant tabs/segments/timeframes replace history and keep scroll; navigating to a screen already in history pops back to it (R03 Done); coin context for pair detail (tiles/rows); P2P filters (currency, amount, payment method); country picker selection; real attachment pickers (expo-image-picker / expo-document-picker) → R02a. Then QA, push, build 4.
 - [x] 4. Build 4 APK released (build-4/NVXO-CEX-4.apk); report sections "App changes" + "How to retest" filled.
+
+## Phase: v3 rollout (10 Nov 2026) → build 5
+Source: Figma pages "06 · v3 Final · Dark" / "07 · v3 Final · Day" (section A redesigned: square 2.8% radii,
+soft raised surfaces instead of outlines, floating tab bar, Material Symbols Sharp, SUSE Mono data, Day = #F2F2F7).
+- [ ] 1. Figma: restyle all screens on pages 01/04 in place (tools/figma-v3.js dark, tools/figma-v3-day.js derives Day
+      from Dark node-for-node). Section C done + checked.
+- [ ] 2. Figma: section A replaced by the v3 Final frames (structured header/content/tab bar, links wired).
+- [ ] 3. Export (exporter: Sharp icons, inner shadows, layer blur) → src/design.
+- [ ] 4. App renderer: inset/drop shadows, glow blur, floating tab bar, Material Symbols Sharp font. QA, APK build 5.
