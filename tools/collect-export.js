@@ -1,8 +1,12 @@
 // Collect EXPB slices from the session transcript, decompress, write src/design/*.json
 const fs = require('fs'), path = require('path');
-const LZ = require(process.env.LZ || '/tmp/claude-0/-home-claude/c5a968d4-6539-5592-a34d-b4f4bcdb28ad/scratchpad/lz/node_modules/lz-string');
+const LZ = require(process.env.LZ || "/tmp/claude-0/-home-claude/c5a968d4-6539-5592-a34d-b4f4bcdb28ad/scratchpad/lz/node_modules/lz-string");
 const T = process.argv[2]; const OUT = process.argv[3];
 const batches = {};
+const take = txt => { const re = /EXPB\|(\d+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)/g; let m; while ((m = re.exec(txt))) { const [_, bn, sl, n, data] = m; if (+bn < +(process.env.MIN_BN || 0)) continue; (batches[bn] = batches[bn] || { n: +n, s: {} }).s[sl] = data; } };
+// large tool results are saved next to the transcript instead of inline
+const TR = T.replace(/\.jsonl$/, '') + '/tool-results';
+if (fs.existsSync(TR)) for (const f of fs.readdirSync(TR)) { const t = fs.readFileSync(path.join(TR, f), 'utf8'); if (t.includes('EXPB|')) take(t); }
 for (const line of fs.readFileSync(T, 'utf8').split('\n')) {
   if (!line.includes('EXPB|')) continue;
   let j; try { j = JSON.parse(line); } catch (e) { continue; }
