@@ -35,6 +35,8 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     SUSE_400Regular, SUSE_500Medium, SUSE_600SemiBold, SUSE_700Bold,
     SUSEMono_400Regular, SUSEMono_500Medium, SUSEMono_700Bold,
+    // v3 icons: Material Symbols Sharp, subset by tools/build-icons.py
+    MaterialSymbolsSharp: require('../../assets/fonts/MaterialSymbolsSharp.ttf'),
   });
   useEffect(() => { if (loaded || error) SplashScreen.hideAsync().catch(() => {}); }, [loaded, error]);
   if (!loaded && !error) return null;

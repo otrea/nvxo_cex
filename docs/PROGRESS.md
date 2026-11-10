@@ -79,7 +79,7 @@ soft raised surfaces instead of outlines, floating tab bar, Material Symbols Sha
 - [x] 1. Figma: restyle all screens on pages 01/04 in place (tools/figma-v3.js dark, tools/figma-v3-day.js derives Day
       from Dark node-for-node). Section C done + checked.
 - [x] 2. Figma: section A replaced by the v3 Final frames (structured header/content/tab bar, links wired).
-- [ ] 3. Export (exporter: Sharp icons, inner shadows, layer blur) → src/design.
+- [x] 3. Export (exporter: Sharp icons, inner shadows, layer blur) → src/design. 332 pairs (664 screens), batches 801–809.
 - [ ] 4. App renderer: inset/drop shadows, glow blur, floating tab bar, Material Symbols Sharp font. QA, APK build 5.
 
 Checkpoint 10 Nov 02:05: verified in Figma — every section A–Z on both pages uses Material Symbols Sharp (0 Round left),
@@ -96,3 +96,7 @@ Day roots #f2f2f7, section A = v3 frames (header/content/footer/tab bar). Next: 
   `missing bn:sl`) can be re-emitted by setting `exp_bn`=bn, `exp_slice`=sl in Figma only while that batch is the
   latest one; otherwise set `exp_pos` back to that batch's start (40 × (bn−801)) and continue.
 - Do NOT run tools/apply-gradients.js for v3: v3 cards use subtle gradients on purpose.
+
+Checkpoint 10 Nov 09:30: export installed into src/design (391 svgs). Icon font assets/fonts/MaterialSymbolsSharp.ttf
+(tools/build-icons.py, 164 icons, 23 KB) + src/render/icons.json. Renderer: fx → boxShadow (inset + stacked), bl ellipses →
+radial-gradient Glow, floating tab bar (absolute, content padded under it). Next: web QA, then APK build 5.

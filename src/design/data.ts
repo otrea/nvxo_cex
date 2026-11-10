@@ -21,6 +21,10 @@ export type DNode = {
   f?: Paint[] | Paint; r?: number | number[]; s?: Stroke; cl?: 1; lm?: 'H' | 'V';
   p?: number[]; g?: number; pa?: string; ca?: string; wr?: 1; cg?: number;
   sd?: [string, number, number, number, number];
+  /** v3 effects: [inset 'i' | drop 'd', hex, alpha, x, y, blur, spread] */
+  fx?: ['i' | 'd', string, number, number, number, number, number][];
+  /** layer blur radius (soft glow ellipses) */
+  bl?: number;
   c?: DNode[];
   ref?: string;
   // added at runtime by src/render/transform.ts

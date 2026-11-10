@@ -298,7 +298,7 @@ export function Screen({ id, interactive = true }: Props) {
 
   if (!tree) return <View style={{ flex: 1, backgroundColor: light ? '#FFFFFF' : '#000000' }} />;
 
-  // screen background stays plain white / black — gradients live only on the big buttons
+  // screen background stays plain (black in Dark, #F2F2F7 in Day) — v3 surfaces carry the depth
   const bg = color(fills(tree.f)[0]) ?? (light ? '#FFFFFF' : '#000000');
 
   // ---- landscape design (A01h): scale the whole frame to fit and centre it ----
@@ -330,7 +330,11 @@ export function Screen({ id, interactive = true }: Props) {
 
   const topEdge = header ? (header.y ?? STATUS_H) + header.h : STATUS_H;
   const contentGap = content ? Math.max(0, (content.y ?? topEdge) - topEdge) : 0;
-  const bottomPad = bottom
+  // v3: the tab bar floats over the content (inset from the sides, lifted off the bottom edge)
+  const floatBar = bottom && bottom.n === 'tab bar' && (bottom.x ?? 0) > 0 ? bottom : undefined;
+  const barLift = floatBar ? Math.max((H - (floatBar.y ?? 0) - floatBar.h) * s, insets.bottom + 6) : 0;
+  const underBar = floatBar ? floatBar.h * s + barLift + 12 * s : 0;
+  const bottomPad = floatBar ? 0 : bottom
     ? bottom.n === 'tab bar'
       ? Math.max(0, insets.bottom - ((bottom.p?.[2] ?? 0) * s) + 4)
       : Math.max(insets.bottom, 12)
@@ -359,7 +363,7 @@ export function Screen({ id, interactive = true }: Props) {
               <ScrollView
                 ref={scrollRef}
                 style={styles.fill}
-                contentContainerStyle={{ flexGrow: 1, paddingTop: contentGap * s }}
+                contentContainerStyle={{ flexGrow: 1, paddingTop: contentGap * s, paddingBottom: underBar }}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
@@ -373,7 +377,7 @@ export function Screen({ id, interactive = true }: Props) {
               <ScrollView
                 ref={scrollRef}
                 style={styles.fill}
-                contentContainerStyle={{ paddingTop: contentGap * s }}
+                contentContainerStyle={{ paddingTop: contentGap * s, paddingBottom: underBar }}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
                 onScroll={ev => { scrollY.current = ev.nativeEvent.contentOffset.y; }}
@@ -386,8 +390,18 @@ export function Screen({ id, interactive = true }: Props) {
           ) : (
             <View style={styles.fill} />
           )}
-          {bottom && <Node n={flow(bottom)} parent={{ lm: 'V' }} env={e} />}
+          {bottom && !floatBar && <Node n={flow(bottom)} parent={{ lm: 'V' }} env={e} />}
           <View style={{ height: bottomPad }} />
+        </View>
+      )}
+
+      {floatBar && (
+        <View style={[StyleSheet.absoluteFill, { alignItems: 'center' }]} pointerEvents="box-none">
+          <View style={{ width: colW, flex: 1 }} pointerEvents="box-none">
+            <View style={{ position: 'absolute', left: (floatBar.x ?? 0) * s, width: floatBar.w * s, height: floatBar.h * s, bottom: barLift }} pointerEvents="box-none">
+              <Node n={{ ...floatBar, x: 0, y: 0 }} parent={{}} env={e} />
+            </View>
+          </View>
         </View>
       )}
 

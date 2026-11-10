@@ -5,7 +5,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { memo, useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import Svg, { Defs, Ellipse, RadialGradient, Stop, SvgXml } from 'react-native-svg';
+import ICONS from './icons.json';
 import { DNode, Seg, SVG } from '@/design/data';
 import { color, fills, gradient } from './paint';
 
@@ -101,9 +102,39 @@ function border(n: DNode, s: number): { st: ViewStyle; w: number[] } {
 }
 
 function shadow(n: DNode, s: number): ViewStyle {
+  // v3: inset highlights + stacked drop shadows, straight from Figma's effect list
+  if (n.fx?.length) {
+    const list = n.fx.map(([k, hex, a, x, y, r, sp]) => `${k === 'i' ? 'inset ' : ''}${x * s}px ${y * s}px ${r * s}px ${sp * s}px ${color([hex, a])}`);
+    return { boxShadow: list.join(', ') } as ViewStyle;
+  }
   if (!n.sd) return {};
   const [hex, a, x, y, r] = n.sd;
   return { boxShadow: `${x * s}px ${y * s}px ${r * s}px ${color([hex, a])}` } as ViewStyle;
+}
+
+/** Layer-blurred ellipse (v3 glows) drawn as a radial gradient that fades out over the blur radius. */
+function Glow({ n, pos, s }: { n: DNode; pos: ViewStyle; s: number }) {
+  const b = n.bl ?? 0;
+  const W = (n.w + 2 * b) * s, H = (n.h + 2 * b) * s;
+  const p = fills(n.f)[0];
+  const c = (Array.isArray(p) ? p[0] : typeof p === 'string' ? p : '#58F9B0') as string;
+  const a = Array.isArray(p) ? p[1] : 1;
+  const st: ViewStyle = { ...pos, left: ((n.x ?? 0) - b) * s, top: ((n.y ?? 0) - b) * s, width: W, height: H };
+  const id = 'g' + Math.round(W) + '_' + Math.round(H) + '_' + c.slice(1);
+  return (
+    <View style={st} pointerEvents="none">
+      <Svg width={W} height={H}>
+        <Defs>
+          <RadialGradient id={id} cx="50%" cy="50%" rx="50%" ry="50%">
+            <Stop offset="0" stopColor={c} stopOpacity={a} />
+            <Stop offset="0.45" stopColor={c} stopOpacity={a * 0.7} />
+            <Stop offset="1" stopColor={c} stopOpacity={0} />
+          </RadialGradient>
+        </Defs>
+        <Ellipse cx={W / 2} cy={H / 2} rx={W / 2} ry={H / 2} fill={`url(#${id})`} />
+      </Svg>
+    </View>
+  );
 }
 
 /** Background: a single solid becomes backgroundColor; anything else becomes stacked layers. */
@@ -221,9 +252,16 @@ function IconNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   }
   const size = (n.fs ?? 24) * s;
   const st: ViewStyle = { ...pos, width: Math.max(n.w, n.fs ?? 0) * s, height: Math.max(n.h, n.fs ?? 0) * s, alignItems: 'center', justifyContent: 'center' };
+  const cp = (ICONS as Record<string, number>)[ic];
   return (
     <View style={st} pointerEvents="none">
-      <MaterialIcons name={ic.replace(/_/g, '-') as any} size={size} color={c} style={{ includeFontPadding: false, lineHeight: size } as TextStyle} />
+      {cp ? (
+        <Text allowFontScaling={false} style={{ fontFamily: 'MaterialSymbolsSharp', fontSize: size, lineHeight: size, color: c, includeFontPadding: false, textAlign: 'center' } as TextStyle}>
+          {String.fromCodePoint(cp)}
+        </Text>
+      ) : (
+        <MaterialIcons name={ic.replace(/_/g, '-') as any} size={size} color={c} style={{ includeFontPadding: false, lineHeight: size } as TextStyle} />
+      )}
     </View>
   );
 }
@@ -253,6 +291,8 @@ export const Node = memo(function Node({ n, parent, env }: { n: DNode; parent: P
     el = xml
       ? <SvgXml xml={xml} width={n.w * s} height={n.h * s} style={link ? undefined : (pos as any)} />
       : <View style={link ? { width: n.w * s, height: n.h * s } : pos} />;
+  } else if (n.t === 'E' && n.bl) {
+    el = <Glow n={n} pos={pos} s={s} />;
   } else {
     // F, R, E
     const bg = background(n, s);
