@@ -401,8 +401,16 @@ export const Node = memo(function Node({ n, parent, env }: { n: DNode; parent: P
 
   if (!link) return el;
   // leaf with a link: the Pressable takes the placement, the leaf renders inside it
+  let lpos = pos;
+  if (n.t === 'T' && env.lang && env.lang !== 'en' && pos.position === 'absolute' && !n.sg?.some(g => g[0].includes('\n'))) {
+    // a translated one-line text link (e.g. "Skip") gets room to grow instead of wrapping
+    const extra = Math.max(12, n.w * 0.8);
+    lpos = { ...pos, width: (n.w + extra) * s };
+    if (n.ta === 'R') lpos.left = ((n.x ?? 0) - extra) * s;
+    else if (n.ta === 'C') lpos.left = ((n.x ?? 0) - extra / 2) * s;
+  }
   return (
-    <Pressable onPress={() => env.act(n, cenv)} hitSlop={10} style={({ pressed }) => [pos, pressed && { opacity: 0.6 }]}>
+    <Pressable onPress={() => env.act(n, cenv)} hitSlop={10} style={({ pressed }) => [lpos, pressed && { opacity: 0.6 }]}>
       {el}
     </Pressable>
   );

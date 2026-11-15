@@ -107,3 +107,11 @@ radial-gradient Glow, floating tab bar (absolute, content padded under it). Next
 - Exporter bug: Figma MAX alignment was dropped, so right-aligned amounts/prices rendered left. Fixed exporter (`'X'`), patched 337 frames in 91 screens via tools/fix-max-align.js, renderer maps X → flex-end.
 - Clipped horizontal rows of hug-width items (tab strips, chip rows) render as horizontal scrollers (O01 history tabs).
 - Clipping audit on all screens, both themes: 0 issues.
+
+## Build 7 — Russian + language switch (2026-11-15)
+- Menu (C05) has a new "Language" row under Appearance; it opens the Language sheet (C11, cloned from C07) with English / Русский. The choice is saved on the phone; a phone set to Russian starts in Russian.
+- All app text is translated at render time from `src/i18n/ru.json` (keyed by the exact English string), so screen logic still runs on the English design. Dates, "Vol …", "Price set to …" and "A · B" labels made of known parts are handled by rules in `src/i18n/i18n.tsx`.
+- Fonts: SUSE has no Cyrillic, so any text with Cyrillic uses Onest (sans) / JetBrains Mono (mono); numbers stay in SUSE.
+- Russian layout: free-standing chips grow with their text, one-line labels never wrap (multi-word ones may wrap inside layouts), tab/chip strips scroll sideways, and on Android one-word labels shrink up to 20 % to fit.
+- Pipeline after any new Figma export: `node tools/copy-fixes.js && node tools/add-language.js && node tools/i18n-extract.js && node tools/i18n-build.js` (the build lists any new English string that still needs Russian; translations live in `i18n/ru/*.json`, names/emails that stay as-is in `i18n/keep.json`). Do NOT re-run tools/fix-max-align.js on an old export: the new exporter writes MAX alignment itself.
+- QA: clipping audit English 0 issues (dark + light); Russian only flags labels inside horizontal scrollers and onboarding headlines whose boxes are a few px short (checked visually: fine).
