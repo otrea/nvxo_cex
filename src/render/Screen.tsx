@@ -318,7 +318,7 @@ export function Screen({ id, interactive = true }: Props) {
     return (
       <View style={[styles.fill, { backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }]}>
         <View style={{ width: tree.w * s, height: tree.h * s }}>
-          {tree.c?.filter(c => c.n !== 'status bar' && c.n !== 'home indicator').map((c, i) => <Node key={i} n={c} parent={{}} env={e} />)}
+          {tree.c?.filter(c => c.n !== 'status bar' && c.n !== 'home indicator').map((c, i) => <Node key={i} n={c} parent={{ w: tree.w }} env={e} />)}
         </View>
       </View>
     );

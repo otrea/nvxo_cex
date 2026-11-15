@@ -33,16 +33,16 @@ export type Env = {
   onField?: (k: string, v: string) => void;
 };
 
-type Parent = { lm?: 'H' | 'V' } | null;
+type Parent = { lm?: 'H' | 'V'; w?: number } | null;
 
 const WEIGHT: Record<string, string> = {
   Thin: '400Regular', ExtraLight: '400Regular', Light: '400Regular', Regular: '400Regular',
   Medium: '500Medium', SemiBold: '600SemiBold', Bold: '700Bold', ExtraBold: '700Bold', Black: '700Bold',
 };
-/** Russian: SUSE has no Cyrillic — sans text uses Onest, mono text with Cyrillic uses JetBrains Mono. */
-function ruFamily(fam: string, text: string) {
+/** SUSE has no Cyrillic: text with Cyrillic uses Onest (sans) / JetBrains Mono (mono); numbers keep SUSE. */
+function ruFamily(fam: string) {
   if (fam.startsWith('SUSE_')) return 'Onest_' + fam.slice(5);
-  if (fam.startsWith('SUSEMono_') && hasCyrillic(text)) return 'JetBrainsMono_' + fam.slice(9);
+  if (fam.startsWith('SUSEMono_')) return 'JetBrainsMono_' + fam.slice(9);
   return fam;
 }
 
@@ -57,6 +57,10 @@ export function fontFamily(style: string) {
 }
 
 const isLink = (n: DNode) => !!(n.to || n.pd);
+
+/** Absolutely placed horizontal auto-layout frame whose 1–3 children all hug: a chip / pill. */
+const isChip = (n: DNode) => n.t === 'F' && n.lm === 'H' && n.x !== undefined && !!n.c?.length && n.c.length <= 3
+  && n.c.every(c => c.x === undefined && !c.gr && (c.t === 'I' || (c.z ?? 'F')[0] === 'H'));
 
 /** Size + position of a node relative to its parent (Figma sizing rules -> flex). */
 function place(n: DNode, parent: Parent, s: number): ViewStyle {
@@ -81,6 +85,13 @@ function place(n: DNode, parent: Parent, s: number): ViewStyle {
     st.top = (n.y ?? 0) * s;
     st.width = n.w * s;
     st.height = n.h * s;
+    if (isChip(n)) {
+      // a free-standing pill (status chip, badge): grows with longer text (translations) instead of
+      // clipping it; right-hand chips grow to the left
+      delete st.width;
+      st.minWidth = n.w * s;
+      if (parent.w && (n.x ?? 0) + n.w / 2 > parent.w / 2) { delete st.left; st.right = (parent.w - (n.x ?? 0) - n.w) * s; }
+    }
   } else {
     st.width = n.w * s;
     st.height = n.h * s;
@@ -173,10 +184,10 @@ function lineHeight(v: number | string | undefined, fs: number, s: number) {
   return undefined; // 'a' = auto
 }
 
-function segStyle(sg: Seg, s: number, lang?: Lang): TextStyle {
+function segStyle(sg: Seg, s: number): TextStyle {
   const [text, style, fs, paint, lh, ls, dc] = sg;
   const fam = fontFamily(style);
-  const st: TextStyle = { fontFamily: lang === 'ru' ? ruFamily(fam, text) : fam, fontSize: fs * s, color: color(paint) };
+  const st: TextStyle = { fontFamily: hasCyrillic(text) ? ruFamily(fam) : fam, fontSize: fs * s, color: color(paint) };
   const l = lineHeight(lh, fs, s);
   if (l) st.lineHeight = l;
   if (ls) st.letterSpacing = ls * s;
@@ -199,7 +210,10 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     const tw = sg.length > 1 ? tr(whole, lang) : whole;
     sg = tw !== whole ? [[tw, ...sg[0].slice(1)] as Seg] : sg.map(g => [tr(g[0], lang), ...g.slice(1)] as Seg);
   }
-  const auto = !n.ar; // WIDTH_AND_HEIGHT: hug
+  // a translated label that was one line in the design behaves like a hug text, so it never wraps
+  const fs0 = n.sg?.[0]?.[2] ?? 14;
+  const wasOneLine = !n.sg?.some(g => g[0].includes('\n')) && n.h <= fs0 * 1.8;
+  const auto = !n.ar || (lang !== 'en' && n.ar === 'H' && wasOneLine && pos.position === 'absolute');
   const st: TextStyle = { ...(pos as TextStyle), includeFontPadding: false };
   const oneLine = auto && !sg.some(g => g[0].includes('\n'));
   if (auto && st.position === 'absolute') {
@@ -207,7 +221,7 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     // Left-aligned labels take their natural width; centred / right-aligned ones get room on both sides.
     if (oneLine && (!n.ta || n.ta === 'L')) delete st.width;
     else {
-      const slack = oneLine ? 12 : 2;
+      const slack = oneLine ? (lang !== 'en' ? Math.max(12, n.w * 0.8) : 12) : 2;
       st.width = (n.w + slack) * s;
       if (n.ta === 'C') st.left = ((n.x ?? 0) - slack / 2) * s;
       else if (n.ta === 'R') st.left = ((n.x ?? 0) - slack) * s;
@@ -215,15 +229,18 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     delete st.height;
   }
   if (n.ar === 'H') delete st.height;
+  // translated multi-word labels inside a layout may wrap instead of being cut off
+  const wrapOk = lang !== 'en' && oneLine && st.position !== 'absolute' && /\s/.test(sg.map(g => g[0]).join('').trim());
+  if (wrapOk) { st.flexShrink = 1; st.minWidth = 0; }
   if (n.ta) st.textAlign = TA[n.ta];
   if (n.va === 'C') st.textAlignVertical = 'center';
   if (n.va === 'B') st.textAlignVertical = 'bottom';
   if (sg.length === 1) {
-    return <Text allowFontScaling={false} style={[segStyle(sg[0], s, lang), st]} numberOfLines={n.tr || (oneLine ? 1 : auto ? 0 : undefined)}>{sg[0][0]}</Text>;
+    return <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine && !wrapOk ? 1 : auto ? 0 : undefined)} adjustsFontSizeToFit={oneLine && !wrapOk && lang !== 'en'} minimumFontScale={0.8}>{sg[0][0]}</Text>;
   }
   return (
-    <Text allowFontScaling={false} style={[segStyle(sg[0], s, lang), st]} numberOfLines={n.tr || (oneLine ? 1 : undefined)}>
-      {sg.map((g, i) => <Text key={i} allowFontScaling={false} style={segStyle(g, s, lang)}>{g[0]}</Text>)}
+    <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine && !wrapOk ? 1 : undefined)}>
+      {sg.map((g, i) => <Text key={i} allowFontScaling={false} style={segStyle(g, s)}>{g[0]}</Text>)}
     </Text>
   );
 }
@@ -243,7 +260,7 @@ function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     if (!focused.current || lastRev.current !== env.rev) setVal(f.v);
     lastRev.current = env.rev;
   }, [f.v, env.rev]);
-  const base = segStyle([ph || f.v, ...g.slice(1)] as Seg, s, lang);
+  const base = segStyle([ph || f.v, ...g.slice(1)] as Seg, s);
   const st: TextStyle = { ...(pos as TextStyle), ...base, color: f.vc, includeFontPadding: false };
   delete st.height;
   delete st.lineHeight;
@@ -351,10 +368,11 @@ export const Node = memo(function Node({ n, parent, env }: { n: DNode; parent: P
       else st.alignItems = 'flex-start';
       if (n.wr) { st.flexWrap = 'wrap'; st.rowGap = (n.cg ?? 0) * s; }
     }
-    const kids = n.c?.map((c, i) => <Node key={i} n={c} parent={n.t === 'F' ? { lm: n.lm } : { lm: undefined }} env={cenv} />);
+    const kids = n.c?.map((c, i) => <Node key={i} n={c} parent={n.t === 'F' ? { lm: n.lm, w: n.w } : { lm: undefined, w: n.w }} env={cenv} />);
     // A clipped horizontal row of hug-width items (tab strips, chip rows) is a horizontal scroller in the design.
-    if (!link && n.t === 'F' && n.lm === 'H' && n.cl && !n.wr && n.pa !== 'B' && (n.c?.length ?? 0) >= 3
-      && n.c!.every(c => c.x == null && !c.gr && (c.z ?? 'F')[0] === 'H')) {
+    const strip = n.t === 'F' && n.lm === 'H' && !n.wr && (n.c?.length ?? 0) >= 3
+      && n.c!.every(c => c.x == null && !c.gr && (c.z ?? 'F')[0] === 'H');
+    if (!link && strip && ((n.cl && n.pa !== 'B') || (env.lang !== undefined && env.lang !== 'en' && (n.z ?? 'F')[0] !== 'H'))) {
       const { flexDirection, paddingTop, paddingRight, paddingBottom, paddingLeft, gap, justifyContent, alignItems, ...outer } = st;
       return (
         <View style={outer} pointerEvents={env.interactive ? 'auto' : 'none'}>

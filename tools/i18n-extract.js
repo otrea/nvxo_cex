@@ -3,7 +3,7 @@
 const fs = require('fs');
 const s = require('../src/design/screens.json');
 const out = new Map();
-const add = (t, where) => { if (typeof t !== 'string' || !/[a-z]{2}/.test(t)) return; if (!out.has(t)) out.set(t, where); };
+const add = (t, where) => { if (typeof t !== 'string' || !/[a-z]/.test(t) || /^[0-9a-f]{6,}|^\w{4,}…\w/.test(t)) return; if (!out.has(t)) out.set(t, where); };
 function walk(n, where) {
   if (!n || typeof n !== 'object') return;
   if (Array.isArray(n)) { n.forEach(x => walk(x, where)); return; }

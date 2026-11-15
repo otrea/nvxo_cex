@@ -39,8 +39,8 @@ export const LANG_LABEL: Record<Lang, string> = { en: 'English', ru: 'Русск
 
 const DICT = RU as Record<string, string>;
 const MONTHS: Record<string, string> = {
-  Jan: 'янв.', Feb: 'февр.', Mar: 'мар.', Apr: 'апр.', May: 'мая', Jun: 'июн.',
-  Jul: 'июл.', Aug: 'авг.', Sep: 'сент.', Oct: 'окт.', Nov: 'нояб.', Dec: 'дек.',
+  Jan: 'янв', Feb: 'фев', Mar: 'мар', Apr: 'апр', May: 'мая', Jun: 'июн',
+  Jul: 'июл', Aug: 'авг', Sep: 'сен', Oct: 'окт', Nov: 'ноя', Dec: 'дек',
 };
 const MONTHS_LONG: Record<string, string> = {
   January: 'Январь', February: 'Февраль', March: 'Март', April: 'Апрель', May: 'Май', June: 'Июнь',
