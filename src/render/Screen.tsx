@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from '@/components/Toast';
 import { CODE, DARK, DNode, Field, HOME_ID, toDark, treeFor } from '@/design/data';
 import { modeLabel, useTheme } from '@/theme/theme';
+import { useLang } from '@/i18n/i18n';
 import { COINS, decimalsOf, fmt, parseNum } from './coins';
 import { applyState, classify, EMPTY, selfToast, UIState } from './interact';
 import { color, fills } from './paint';
@@ -97,6 +98,7 @@ const sizeOk = (a: Attachment) => !a.size || a.size <= 5 * 1024 * 1024;
 
 export function Screen({ id, interactive = true }: Props) {
   const { light, mode, setMode } = useTheme();
+  const { lang, setLang } = useLang();
   const win = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const toast = useToast();
@@ -250,6 +252,7 @@ export function Screen({ id, interactive = true }: Props) {
       interactive,
       code,
       mode: modeLabel(mode),
+      lang,
       rev,
       onField,
       selColors: tree ? radioColors(tree) : undefined,
@@ -257,6 +260,13 @@ export function Screen({ id, interactive = true }: Props) {
         const pd = n.pd ?? '';
         const name = n.n ?? '';
         const theme = code === 'C07' && /^row (Automatic|Dark|Light) → back$/.exec(name);
+        const lg = code === 'C11' && /^row (English|Русский) → back$/.exec(name);
+        if (lg) {
+          Haptics.selectionAsync().catch(() => {});
+          setLang(lg[1] === 'Русский' ? 'ru' : 'en');
+          back();
+          return;
+        }
         if (theme) {
           Haptics.selectionAsync().catch(() => {});
           setMode(theme[1] === 'Automatic' ? 'system' : theme[1] === 'Dark' ? 'dark' : 'light');
@@ -294,7 +304,7 @@ export function Screen({ id, interactive = true }: Props) {
         go(target, tabLike ? 'tab' : 'push');
       },
     };
-  }, [meta, id, interactive, mode, setMode, toast, tree, base, applied, rev, onField, doX]);
+  }, [meta, id, interactive, mode, setMode, lang, setLang, toast, tree, base, applied, rev, onField, doX]);
 
   if (!tree) return <View style={{ flex: 1, backgroundColor: light ? '#F2F2F7' : '#000000' }} />;
 

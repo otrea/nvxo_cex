@@ -2,6 +2,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/theme';
+import { tr, useLang } from '@/i18n/i18n';
 
 const ToastCtx = createContext<(msg: string) => void>(() => {});
 export const useToast = () => useContext(ToastCtx);
@@ -12,6 +13,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const insets = useSafeAreaInsets();
   const { light } = useTheme();
+  const { lang } = useLang();
 
   const show = useCallback((m: string) => {
     setMsg(m);
@@ -30,7 +32,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {msg ? (
         <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: 'flex-end', alignItems: 'center', paddingBottom: insets.bottom + 96 }]}>
           <Animated.View style={[styles.toast, light ? styles.tl : styles.td, { opacity: op }]}>
-            <Text allowFontScaling={false} style={[styles.txt, { color: light ? '#FFFFFF' : '#000000' }]}>{msg}</Text>
+            <Text allowFontScaling={false} style={[styles.txt, { color: light ? '#FFFFFF' : '#000000' }, lang === 'ru' && { fontFamily: 'Onest_500Medium' }]}>{tr(msg, lang)}</Text>
           </Animated.View>
         </View>
       ) : null}

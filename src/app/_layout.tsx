@@ -9,6 +9,9 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastProvider } from '@/components/Toast';
 import { BG, ThemeProvider, useTheme } from '@/theme/theme';
+import { LangProvider } from '@/i18n/i18n';
+import { Onest_400Regular, Onest_500Medium, Onest_600SemiBold, Onest_700Bold } from '@expo-google-fonts/onest';
+import { JetBrainsMono_400Regular, JetBrainsMono_500Medium, JetBrainsMono_700Bold } from '@expo-google-fonts/jetbrains-mono';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -35,6 +38,9 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     SUSE_400Regular, SUSE_500Medium, SUSE_600SemiBold, SUSE_700Bold,
     SUSEMono_400Regular, SUSEMono_500Medium, SUSEMono_700Bold,
+    // Russian: Cyrillic-capable faces (SUSE has no Cyrillic)
+    Onest_400Regular, Onest_500Medium, Onest_600SemiBold, Onest_700Bold,
+    JetBrainsMono_400Regular, JetBrainsMono_500Medium, JetBrainsMono_700Bold,
     // v3 icons: Material Symbols Sharp, subset by tools/build-icons.py
     MaterialSymbolsSharp: require('../../assets/fonts/MaterialSymbolsSharp.ttf'),
   });
@@ -43,7 +49,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <Shell />
+        <LangProvider>
+          <Shell />
+        </LangProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/jetbrains-mono": "^0.4.1",
+    "@expo-google-fonts/onest": "^0.4.2",
     "@expo-google-fonts/suse": "^0.4.3",
     "@expo-google-fonts/suse-mono": "^0.4.0",
     "@expo/vector-icons": "^15.0.2",

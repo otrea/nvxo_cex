@@ -9,6 +9,7 @@ import Svg, { Defs, Ellipse, RadialGradient, Stop, SvgXml } from 'react-native-s
 import ICONS from './icons.json';
 import { DNode, Seg, SVG } from '@/design/data';
 import { color, fills, gradient } from './paint';
+import { hasCyrillic, Lang, LANG_LABEL, tr } from '@/i18n/i18n';
 
 export type Env = {
   s: number;
@@ -23,6 +24,10 @@ export type Env = {
   apLabel?: string;
   /** current appearance, as the C07 row label */
   mode?: string;
+  /** UI language; text is translated at render time */
+  lang?: Lang;
+  /** C05 language row value */
+  lgLabel?: string;
   /** bumped when the app sets a field value (½, ×2, steppers…) so focused inputs take it */
   rev?: number;
   onField?: (k: string, v: string) => void;
@@ -34,6 +39,13 @@ const WEIGHT: Record<string, string> = {
   Thin: '400Regular', ExtraLight: '400Regular', Light: '400Regular', Regular: '400Regular',
   Medium: '500Medium', SemiBold: '600SemiBold', Bold: '700Bold', ExtraBold: '700Bold', Black: '700Bold',
 };
+/** Russian: SUSE has no Cyrillic — sans text uses Onest, mono text with Cyrillic uses JetBrains Mono. */
+function ruFamily(fam: string, text: string) {
+  if (fam.startsWith('SUSE_')) return 'Onest_' + fam.slice(5);
+  if (fam.startsWith('SUSEMono_') && hasCyrillic(text)) return 'JetBrainsMono_' + fam.slice(9);
+  return fam;
+}
+
 export function fontFamily(style: string) {
   if (style.startsWith('M') && style !== 'Medium') {
     const w = WEIGHT[style.slice(1)] ?? '400Regular';
@@ -161,9 +173,10 @@ function lineHeight(v: number | string | undefined, fs: number, s: number) {
   return undefined; // 'a' = auto
 }
 
-function segStyle(sg: Seg, s: number): TextStyle {
-  const [, style, fs, paint, lh, ls, dc] = sg;
-  const st: TextStyle = { fontFamily: fontFamily(style), fontSize: fs * s, color: color(paint) };
+function segStyle(sg: Seg, s: number, lang?: Lang): TextStyle {
+  const [text, style, fs, paint, lh, ls, dc] = sg;
+  const fam = fontFamily(style);
+  const st: TextStyle = { fontFamily: lang === 'ru' ? ruFamily(fam, text) : fam, fontSize: fs * s, color: color(paint) };
   const l = lineHeight(lh, fs, s);
   if (l) st.lineHeight = l;
   if (ls) st.letterSpacing = ls * s;
@@ -178,6 +191,14 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   const s = env.s;
   let sg = n.sg ?? [];
   if (env.apLabel && sg.length === 1 && /^(Dark|Light|Automatic)$/.test(sg[0][0])) sg = [[env.apLabel, ...sg[0].slice(1)] as Seg];
+  if (env.lgLabel && sg.length === 1 && /^(English|Русский)$/.test(sg[0][0])) sg = [[env.lgLabel, ...sg[0].slice(1)] as Seg];
+  const lang = env.lang ?? 'en';
+  if (lang !== 'en') {
+    // translate the whole text when the dictionary has it, else segment by segment
+    const whole = sg.map(g => g[0]).join('');
+    const tw = sg.length > 1 ? tr(whole, lang) : whole;
+    sg = tw !== whole ? [[tw, ...sg[0].slice(1)] as Seg] : sg.map(g => [tr(g[0], lang), ...g.slice(1)] as Seg);
+  }
   const auto = !n.ar; // WIDTH_AND_HEIGHT: hug
   const st: TextStyle = { ...(pos as TextStyle), includeFontPadding: false };
   const oneLine = auto && !sg.some(g => g[0].includes('\n'));
@@ -198,11 +219,11 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   if (n.va === 'C') st.textAlignVertical = 'center';
   if (n.va === 'B') st.textAlignVertical = 'bottom';
   if (sg.length === 1) {
-    return <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine ? 1 : auto ? 0 : undefined)}>{sg[0][0]}</Text>;
+    return <Text allowFontScaling={false} style={[segStyle(sg[0], s, lang), st]} numberOfLines={n.tr || (oneLine ? 1 : auto ? 0 : undefined)}>{sg[0][0]}</Text>;
   }
   return (
-    <Text allowFontScaling={false} style={[segStyle(sg[0], s), st]} numberOfLines={n.tr || (oneLine ? 1 : undefined)}>
-      {sg.map((g, i) => <Text key={i} allowFontScaling={false} style={segStyle(g, s)}>{g[0]}</Text>)}
+    <Text allowFontScaling={false} style={[segStyle(sg[0], s, lang), st]} numberOfLines={n.tr || (oneLine ? 1 : undefined)}>
+      {sg.map((g, i) => <Text key={i} allowFontScaling={false} style={segStyle(g, s, lang)}>{g[0]}</Text>)}
     </Text>
   );
 }
@@ -211,7 +232,9 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
 function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   const f = n.in!;
   const s = env.s;
+  const lang = env.lang ?? 'en';
   const g = n.sg![0];
+  const ph = tr(f.ph, lang);
   const [val, setVal] = useState(f.v);
   const focused = useRef(false);
   const lastRev = useRef(env.rev);
@@ -220,12 +243,12 @@ function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     if (!focused.current || lastRev.current !== env.rev) setVal(f.v);
     lastRev.current = env.rev;
   }, [f.v, env.rev]);
-  const base = segStyle(g, s);
+  const base = segStyle([ph || f.v, ...g.slice(1)] as Seg, s, lang);
   const st: TextStyle = { ...(pos as TextStyle), ...base, color: f.vc, includeFontPadding: false };
   delete st.height;
   delete st.lineHeight;
   if (!env.interactive) {
-    return <Text allowFontScaling={false} style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || f.ph}</Text>;
+    return <Text allowFontScaling={false} style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || ph}</Text>;
   }
   return (
     <TextInput
@@ -234,7 +257,7 @@ function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
       onChangeText={t => { setVal(t); env.onField?.(f.k, t); }}
       onFocus={() => { focused.current = true; }}
       onBlur={() => { focused.current = false; }}
-      placeholder={f.ph}
+      placeholder={ph}
       placeholderTextColor={color(g[3])}
       selectionColor="#58F9B0"
       cursorColor="#58F9B0"
@@ -279,7 +302,12 @@ function childEnv(n: DNode, env: Env): Env {
     const m = /^row (Automatic|Dark|Light) → back$/.exec(n.n);
     if (m) return { ...env, sel: env.mode === m[1] };
   }
+  if (env.code === 'C11' && n.n) {
+    const m = /^row (English|Русский) → back$/.exec(n.n);
+    if (m) return { ...env, sel: LANG_LABEL[env.lang ?? 'en'] === m[1] };
+  }
   if (env.code === 'C05' && n.n?.startsWith('row Appearance')) return { ...env, apLabel: env.mode };
+  if (env.code === 'C05' && n.n?.startsWith('row Language')) return { ...env, lgLabel: LANG_LABEL[env.lang ?? 'en'] };
   return env;
 }
 
