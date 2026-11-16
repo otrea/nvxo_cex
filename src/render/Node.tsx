@@ -10,6 +10,7 @@ import ICONS from './icons.json';
 import { DNode, Seg, SVG } from '@/design/data';
 import { color, fills, gradient } from './paint';
 import { hasCyrillic, Lang, LANG_LABEL, tr } from '@/i18n/i18n';
+import { persona } from '@/i18n/persona';
 
 export type Env = {
   s: number;
@@ -210,6 +211,7 @@ function TextNode({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
     const tw = sg.length > 1 ? tr(whole, lang) : whole;
     sg = tw !== whole ? [[tw, ...sg[0].slice(1)] as Seg] : sg.map(g => [tr(g[0], lang), ...g.slice(1)] as Seg);
   }
+  sg = sg.map(g => [persona(g[0], lang, env.code), ...g.slice(1)] as Seg);
   // a translated label that was one line in the design behaves like a hug text, so it never wraps
   const fs0 = n.sg?.[0]?.[2] ?? 14;
   const wasOneLine = !n.sg?.some(g => g[0].includes('\n')) && n.h <= fs0 * 1.8;
@@ -251,21 +253,22 @@ function FieldText({ n, pos, env }: { n: DNode; pos: ViewStyle; env: Env }) {
   const s = env.s;
   const lang = env.lang ?? 'en';
   const g = n.sg![0];
-  const ph = tr(f.ph, lang);
-  const [val, setVal] = useState(f.v);
+  const ph = persona(tr(f.ph, lang), lang, env.code);
+  const fv = persona(f.v, lang, env.code);
+  const [val, setVal] = useState(fv);
   const focused = useRef(false);
   const lastRev = useRef(env.rev);
   useEffect(() => {
     // follow values the app sets, but never fight the user's typing
-    if (!focused.current || lastRev.current !== env.rev) setVal(f.v);
+    if (!focused.current || lastRev.current !== env.rev) setVal(fv);
     lastRev.current = env.rev;
-  }, [f.v, env.rev]);
-  const base = segStyle([ph || f.v, ...g.slice(1)] as Seg, s);
+  }, [fv, env.rev]);
+  const base = segStyle([ph || fv, ...g.slice(1)] as Seg, s);
   const st: TextStyle = { ...(pos as TextStyle), ...base, color: f.vc, includeFontPadding: false };
   delete st.height;
   delete st.lineHeight;
   if (!env.interactive) {
-    return <Text allowFontScaling={false} style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && f.v ? '•'.repeat(f.v.length) : f.v || ph}</Text>;
+    return <Text allowFontScaling={false} style={[st, !f.v && { color: color(g[3]) }]} numberOfLines={1}>{f.kind === 'secure' && fv ? '•'.repeat(fv.length) : fv || ph}</Text>;
   }
   return (
     <TextInput
