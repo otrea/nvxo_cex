@@ -115,3 +115,8 @@ radial-gradient Glow, floating tab bar (absolute, content padded under it). Next
 - Russian layout: free-standing chips grow with their text, one-line labels never wrap (multi-word ones may wrap inside layouts), tab/chip strips scroll sideways, and on Android one-word labels shrink up to 20 % to fit.
 - Pipeline after any new Figma export: `node tools/copy-fixes.js && node tools/add-language.js && node tools/i18n-extract.js && node tools/i18n-build.js` (the build lists any new English string that still needs Russian; translations live in `i18n/ru/*.json`, names/emails that stay as-is in `i18n/keep.json`). Do NOT re-run tools/fix-max-align.js on an old export: the new exporter writes MAX alignment itself.
 - QA: clipping audit English 0 issues (dark + light); Russian only flags labels inside horizontal scrollers and onboarding headlines whose boxes are a few px short (checked visually: fine).
+
+## Build 8 — international demo persona (2026-11-16)
+- Jay's call: the Czech demo user is replaced per language — English: Alex Morgan (Berlin, +49, DE IBAN, Deutsche Bank); Russian: Алексей Смирнов (Riga, +371, LV IBAN, Swedbank). P2P counterparties, masked e-mails and login locations follow. Company data (NVXO Europe a.s., Prague, its own bank account) stays Czech.
+- Done at render time in `src/i18n/persona.ts` (after translation), so Figma still shows Jan Novák.
+- Product names stay in Latin script in Russian (Launchpad, Earn, P2P, Calls/Puts) — Jay confirmed.
